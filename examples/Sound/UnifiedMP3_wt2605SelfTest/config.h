@@ -1,0 +1,475 @@
+
+#ifndef __UNIFIED_MQTT_ACTUATOR_CONFIG_H__
+#define __UNIFIED_MQTT_ACTUATOR_CONFIG_H__
+
+#include "src/arduinoHardwareHelper.h"
+#include "src/detectArduinoHardware.h"
+#include "src/ArduinoShieldConverter.h"
+
+/* character display */
+//#define USE_GROVE_LCD
+//#define USE_ACM1602NI
+//#define USE_SC1602BSLB
+//#define USE_SC2004CSLB
+
+/* LED */
+//#define GROVE_NEO_PIXEL
+//#define GROVE_MONO_LED
+//#define USE_SIMPLE_COLOR_LED
+//#define GROVE_LED_CIRCULAR
+//#define GROVE_LED_BAR
+//#define GROVE_CHAINABLE_LED
+
+/* Simple digital / switch */
+//#define USE_SWITCH
+
+/* N SEG LED */
+//#define USE_OSL12306_16
+//#define USE_OSL20541
+//#define USE_OSL30561
+//#define USE_GROVE_TM1637
+//#define USE_DFR0090
+#define MAX_DIGITS_OF_NSEG_LED 8
+
+/* Servo */
+//#define USE_SERVO // Giga, ESP32は非対応
+
+/* Simple sound (speaker etc) */
+//#define USE_SIMPLE_SOUND
+
+/* PMW */
+//#define USE_PMW
+
+/* IRDA */
+//#define USE_IRDA // Gigaは非対応
+
+/* MP3 player : Giga, MKR WiFi1010, Nano33 IoT, Zero , MKR Zero, M0 pro は非対応 */
+
+//#define __USE_KT403A_PLAYER__
+//#define __USE_WT2003S_PLAYER__
+#define __USE_WT2605C_PLAYER__
+//#define __USE_DF_ROBOT_DF_PLAYER_MINI__
+
+/* Graphic Display */
+//#define USE_GIGA_DISPLAY_GFX // Gigaのみ対応
+//#define USE_BODMER_TFT_ESPI
+//#define USE_ADAFRUIT_GFX
+
+
+
+#define NUM_OF_DEVICES 1
+
+
+/* LCD pin numbers */
+#define LIQUID_CRYSTAL_PIN_RS D6
+#define LIQUID_CRYSTAL_PIN_ES D7
+#define LIQUID_CRYSTAL_PIN_D4 D4
+#define LIQUID_CRYSTAL_PIN_D5 D5
+#define LIQUID_CRYSTAL_PIN_D6 D2
+#define LIQUID_CRYSTAL_PIN_D7 D3
+
+
+/* LED */
+#define GROVE_LED_BAR_PIN_CLK   D13
+#define GROVE_LED_BAR_PIN_DATA  D10
+#define GROVE_LED_BAR_DIRECTION 0
+#define GROVE_LED_BAR_NUM_OF_LED 10
+
+// MKR
+//#define GROVE_LED_CIRCLE_PIN_CLK   D5
+//#define GROVE_LED_CIRCLE_PIN_DATA  D6
+// Nano
+#define GROVE_LED_CIRCLE_PIN_CLK   D4
+#define GROVE_LED_CIRCLE_PIN_DATA  D5
+// other
+//#define GROVE_LED_CIRCLE_PIN_CLK   D7
+//#define GROVE_LED_CIRCLE_PIN_DATA  D8
+#define GROVE_LED_CIRCLE_DIRECTION 0
+#define GROVE_LED_CIRCLE_NUM_OF_LED 24
+
+#define GROVE_CHAINABLE_LED_NUM_OF_LED 3
+// MKR
+//#define GROVE_CHAINABLE_LED_PIN_CLK D5
+//#define GROVE_CHAINABLE_LED_PIN_DATA D6
+// other
+#define GROVE_CHAINABLE_LED_PIN_CLK D2
+#define GROVE_CHAINABLE_LED_PIN_DATA D3
+
+#define LED_NEO_PIXEL_NUM_OF_LED  10
+#define LED_NEO_PIXEL_PIN D4
+
+// Mega, Uno R4, M0 pro, Giga, Nano 33 IoT, Nano ESP32
+#define SIMPLE_COLOR_LED_RED_PIN D6
+#define SIMPLE_COLOR_LED_GREEN_PIN D9
+#define SIMPLE_COLOR_LED_BLUE_PIN D11
+// MKR
+//#define SIMPLE_COLOR_LED_RED_PIN D2
+//#define SIMPLE_COLOR_LED_GREEN_PIN D3
+//#define SIMPLE_COLOR_LED_BLUE_PIN D4
+
+
+#define USE_SIMPLE_COLOR_LED_PIN_TYPE PULL_UP
+//#define USE_SIMPLE_COLOR_LED_PIN_TYPE PULL_DOWN
+
+#define GROVE_MONO_LED_PIN  D5
+//#define GROVE_MONO_LED_PIN_TYPE PULL_DOWN
+#define GROVE_MONO_LED_PIN_TYPE PULL_UP
+
+/* N seg LED */
+#define OSL12306_16_NUM_OF_DIGITS 1
+#define OSL12306_16_PIN_TYPE  ANODE_COMMON
+#define OSL12306_16_PIN_1 D41
+#define OSL12306_16_PIN_2 D39
+#define OSL12306_16_PIN_3 D37
+#define OSL12306_16_PIN_4 D35
+#define OSL12306_16_PIN_5 D33
+#define OSL12306_16_PIN_6 D31
+#define OSL12306_16_PIN_7 D29
+#define OSL12306_16_PIN_8 D27
+#define OSL12306_16_PIN_9 D25
+#define OSL12306_16_PIN_10 D23
+
+#define OSL12306_16_PIN_12 D22
+#define OSL12306_16_PIN_13 D24
+#define OSL12306_16_PIN_14 D26
+#define OSL12306_16_PIN_15 D28
+#define OSL12306_16_PIN_16 D30
+#define OSL12306_16_PIN_17 D32
+#define OSL12306_16_PIN_18 D34
+#define OSL12306_16_PIN_19 D36
+#define OSL12306_16_PIN_20 D38
+
+#define OSL12306_16_PIN_A1 OSL12306_16_PIN_17
+#define OSL12306_16_PIN_A2 OSL12306_16_PIN_14
+#define OSL12306_16_PIN_B OSL12306_16_PIN_13
+#define OSL12306_16_PIN_C OSL12306_16_PIN_9
+#define OSL12306_16_PIN_D1 OSL12306_16_PIN_4
+#define OSL12306_16_PIN_D2 OSL12306_16_PIN_7
+#define OSL12306_16_PIN_E OSL12306_16_PIN_3
+#define OSL12306_16_PIN_F OSL12306_16_PIN_19
+#define OSL12306_16_PIN_G1 OSL12306_16_PIN_2
+#define OSL12306_16_PIN_G2 OSL12306_16_PIN_12
+#define OSL12306_16_PIN_J OSL12306_16_PIN_18
+#define OSL12306_16_PIN_K OSL12306_16_PIN_16
+#define OSL12306_16_PIN_L OSL12306_16_PIN_15
+#define OSL12306_16_PIN_M OSL12306_16_PIN_8
+#define OSL12306_16_PIN_N OSL12306_16_PIN_6
+#define OSL12306_16_PIN_P OSL12306_16_PIN_5
+#define OSL12306_16_PIN_DP OSL12306_16_PIN_10
+#define OSL12306_16_PIN_DIGIT OSL12306_16_PIN_1
+
+#define OSL20541_NUM_OF_DIGITS 2
+#define OSL20541_PIN_TYPE  ANODE_COMMON
+#define OSL20541_PIN_1 D22
+#define OSL20541_PIN_2 D24
+#define OSL20541_PIN_3 D26 // not connected
+#define OSL20541_PIN_4 D28
+#define OSL20541_PIN_5 D30
+#define OSL20541_PIN_6 D32
+#define OSL20541_PIN_7 D34
+#define OSL20541_PIN_8 D36
+#define OSL20541_PIN_9 D38
+#define OSL20541_PIN_10 D25
+#define OSL20541_PIN_11 D27
+#define OSL20541_PIN_12 D29
+#define OSL20541_PIN_13 D31
+#define OSL20541_PIN_14 D33
+#define OSL20541_PIN_15 D35
+#define OSL20541_PIN_16 D37
+#define OSL20541_PIN_17 D39
+#define OSL20541_PIN_18 D41
+
+#define OSL20541_PIN_A OSL20541_PIN_12
+#define OSL20541_PIN_B OSL20541_PIN_10
+#define OSL20541_PIN_C OSL20541_PIN_9
+#define OSL20541_PIN_D OSL20541_PIN_7
+#define OSL20541_PIN_E OSL20541_PIN_1
+#define OSL20541_PIN_F OSL20541_PIN_18
+#define OSL20541_PIN_G1 OSL20541_PIN_13
+#define OSL20541_PIN_G2 OSL20541_PIN_6
+#define OSL20541_PIN_H OSL20541_PIN_17
+#define OSL20541_PIN_J OSL20541_PIN_15
+#define OSL20541_PIN_K OSL20541_PIN_14
+#define OSL20541_PIN_L OSL20541_PIN_5
+#define OSL20541_PIN_M OSL20541_PIN_4
+#define OSL20541_PIN_N OSL20541_PIN_2
+#define OSL20541_PIN_DP OSL20541_PIN_8
+#define OSL20541_PIN_DIGIT_1 OSL20541_PIN_16
+#define OSL20541_PIN_DIGIT_2 OSL20541_PIN_11
+
+#define OSL30561_NUM_OF_DIGITS 3
+#define OSL30561_PIN_TYPE  OSL30561_TYPE_ANODE_COMMON
+#define OSL30561_PIN_1 D22
+#define OSL30561_PIN_2 D24
+#define OSL30561_PIN_3 D26
+#define OSL30561_PIN_4 D28
+#define OSL30561_PIN_5 D30
+//
+#define OSL30561_PIN_7 D23
+#define OSL30561_PIN_8 D25
+#define OSL30561_PIN_9 D27
+#define OSL30561_PIN_10 D29
+#define OSL30561_PIN_11 D31
+#define OSL30561_PIN_12 D33
+
+#define OSL30561_PIN_A OSL30561_PIN_11
+#define OSL30561_PIN_B OSL30561_PIN_7
+#define OSL30561_PIN_C OSL30561_PIN_4
+#define OSL30561_PIN_D OSL30561_PIN_2
+#define OSL30561_PIN_E OSL30561_PIN_1
+#define OSL30561_PIN_F OSL30561_PIN_10
+#define OSL30561_PIN_G OSL30561_PIN_5
+#define OSL30561_PIN_DP OSL30561_PIN_3
+#define OSL30561_PIN_DIGIT_1 OSL30561_PIN_12
+#define OSL30561_PIN_DIGIT_2 OSL30561_PIN_9
+#define OSL30561_PIN_DIGIT_3 OSL30561_PIN_8
+
+
+// MKR
+//#define GROVE_NSEG_LED_PIN_CLK  D5
+//#define GROVE_NSEG_LED_PIN_DATA D6
+// other
+#define GROVE_NSEG_LED_PIN_CLK  D2
+#define GROVE_NSEG_LED_PIN_DATA D3
+
+
+#define DFR0090_NUM_OF_DIGITS 8
+// MKR
+//Pin connected to clock pin (SH_CP) of 74HC595
+//#define DFR0090_CLOCK_PIN D6
+//Pin connected to latch pin (ST_CP) of 74HC595
+//#define DFR0090_LATCH_PIN D5
+//Pin connected to Data in (DS) of 74HC595
+//#define DFR0090_DATA_PIN  D4
+// other
+//Pin connected to clock pin (SH_CP) of 74HC595
+#define DFR0090_CLOCK_PIN D5
+//Pin connected to latch pin (ST_CP) of 74HC595
+#define DFR0090_LATCH_PIN D4
+//Pin connected to Data in (DS) of 74HC595
+#define DFR0090_DATA_PIN  D6
+
+/* Switch */
+// MKR
+//#define SWITCH_PIN D4
+// other
+#define SWITCH_PIN D6
+
+/* Servo */
+#define SERVO_PIN D4
+
+/* Simple sound */
+#define BUZZER
+#define SPEAKER
+
+//MKR
+//#define SPEAKER_PIN D4 // スピーカー
+//#define BUZZER_PIN D5 //ブザー
+// Nano
+#define SPEAKER_PIN D2 // スピーカー
+#define BUZZER_PIN D4 //ブザー
+// other
+//#define SPEAKER_PIN D6 // スピーカー
+//#define BUZZER_PIN D8 //ブザー
+
+/* PMW */
+// MKR
+#define PMW_PIN D4
+// other
+//#define PMW_PIN D6
+
+/* IRDA */
+#define IR_PIN         D3
+
+/* MP3 player */
+#define SOFTWARE_SERIAL_PIN_RX D2
+#define SOFTWARE_SERIAL_PIN_TX D3
+
+/*
+#define DF_ROBOT_DF_PLAYER_MINI_PIN_RX  D4
+#define DF_ROBOT_DF_PLAYER_MINI_PIN_TX  D5
+*/
+
+
+
+/* Graphic Display */
+#define TFT_ILI9341_TYPE_1
+#undef TFT_ILI9341_TYPE_2
+
+#define TFT_ILI9341_PIN_CS  D2
+#define TFT_ILI9341_PIN_RST D3
+#define TFT_ILI9341_PIN_DC  D4
+#define TFT_ILI9341_PIN_MOSI D11
+#define TFT_ILI9341_PIN_CLK D13
+#define TFT_ILI9341_PIN_MISO D12
+
+
+#define DEBUG
+
+//#define BUFFER_SIZE 128
+#define BUFFER_SIZE 512
+#define SERIAL_SPEED 9600
+#undef USE_ETHERNET
+#define ETHERNET_CHIP_SELECT D10
+#define USE_WIFI
+#define SSID_STR "Buffalo-G-9C50"
+#define WIFI_PASS "jxgdekvmujfyh"
+#define FIX_MAC_ADDRESS 0x90, 0xa2, 0xda, 0x10, 0x11, 0x51
+#define USE_DHCP
+#define SELF_IP_ADDRESS 192, 168, 1, 111
+#define DNS_SERVER_ADDRESS 192, 168, 1, 254
+#define GATEWAY_ADDRESS 192, 168, 1, 254
+#define NETMASK 255, 255, 255, 0
+#undef USE_MQTT_AUTH
+#define MQTT_AUTH_USERNAME "foo"
+#define MQTT_AUTH_PASSWORD "bar"
+#define MQTT_TOPIC "arduino/actuator"
+#define MQTT_SERVER_ADDR "192.168.1.254"
+#define MQTT_PORT 1883
+
+#undef USE_LED_INDICATOR
+#define LED_INDICATOR_PIN_CLK D2
+#define LED_INDICATOR_PIN_DATA D3
+//#define INDICATOR_DURATION 3000
+#define INDICATOR_SHORT_DURATION 1000
+
+#define HOSTNAME "GiGa_R1_WiFi"
+#define APP_NAME "AusEx_mqtt_client"
+
+#define HARD_SERIAL Serial
+
+#undef USE_SYSLOG_SERVER
+#undef USE_LOG_FILE
+#undef LOG_ROTATE
+#define LOGFILE_NAME_HEAD "/syslog"
+#define LOG_FILE_SIZE_MAX 10000000
+#define USE_LOG_SERIAL
+
+#undef USE_FS_H // file system type
+#undef SD_FAT
+#define SD_CS_PIN D8
+
+
+
+#undef USE_RTC
+#define USE_PCF8523
+#undef UPDATE_RTC_BY_NTP
+#undef USE_NTP
+
+#ifdef USE_SYSLOG_SERVER
+#define _SYSLOG_USE_NETWORK
+#endif /* USE_SYSLOG_SERVER */
+#ifdef USE_LOG_FILE
+#define _SYSLOG_USE_FILE
+#endif /* USE_LOG_FILE */
+#ifdef SD_FAT
+#define _SYSLOG_USE_SD_FAT
+#endif /* SD_FAT */
+#ifdef HARD_SERIAL
+#define _SYSLOG_USE_HARDWARE_SERIAL
+#else /* HARD_SERIAL */
+#define _SYSLOG_USE_SOFTWARE_SERIAL
+#endif /* HARD_SERIAL */
+
+#define _SYSLOG_OUTPUT_TIME
+#ifdef USE_RTC
+#define _SYSLOG_USE_RTC
+#endif /* USE_RTC */
+#ifdef USE_NTP
+#define _SYSLOG_USE_NTP
+#endif /* USE_NTP */
+
+#undef USE_WDT // Uno R4, Gigaは非対応
+#define WDT_DURATION 20000
+#define WDT_SHORT_DURATION 500
+
+//#define I2C_IF Wire // Nano 33 IoT, MKR WiFi 1010, Mega2560, Zero, MKR Zero
+//#define I2C_IF Wire1 // Giga
+#ifndef I2C_IF
+#if HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN || HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB
+#define I2C_IF Wire1
+#else
+#define I2C_IF Wire
+#endif
+#endif /* I2C_IF */
+
+/* 定義する変数の展開 */
+#ifdef USE_GROVE_LCD
+#define LCD_HAL_USE_GROVE
+#endif /* USE_GROVE_LCD */
+
+#if defined(USE_SC1602BSLB) || defined(USE_SC2004CSLB)
+#define USE_LIQUID_CRYSTAL
+#endif /* USE_SC1602BSLB or  USE_SC2004CSLB */
+
+
+#ifdef USE_LIQUID_CRYSTAL
+#define LCD_HAL_USE_LIQUID_CRYSTAL
+#endif /* USE_LIQUID_CRYSTAL */
+
+#ifdef USE_ACM1602NI
+#define LCD_HAL_USE_ACM1602NI
+#endif /* USE_ACM1602NI */
+
+#if defined(USE_GROVE_LCD) || defined(USE_LIQUID_CRYSTAL) || defined(USE_ACM1602NI)
+#define USE_CHARACTER_DISPLAY
+#endif /* USE_GROVE_LCD || USE_LIQUID_CRYSTAL || USE_ACM1602NI */
+
+
+#ifdef GROVE_NEO_PIXEL
+#define LED_HAL_USE_NEO_PIXEL
+#endif /* GROVE_NEO_PIXEL */
+
+#if defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR)
+#define LED_HAL_USE_MY9221
+#endif /* GROVE_LED_CIRCULAR || GROVE_LED_BAR */
+
+#ifdef GROVE_CHAINABLE_LED
+#define LED_HAL_USE_P98X3 // Grove CHAINABLE LED etc.
+#endif /* GROVE_CHAINABLE_LED */
+
+#if defined(GROVE_NEO_PIXEL) || defined(GROVE_MONO_LED) || defined(USE_SIMPLE_COLOR_LED) || defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR) || defined(GROVE_CHAINABLE_LED)
+#define USE_LED
+#endif /* GROVE_NEO_PIXEL || GROVE_MONO_LED || USE_SIMPLE_COLOR_LED || GROVE_LED_CIRCULAR || GROVE_LED_BAR || GROVE_CHAINABLE_LED */
+
+/* N SEG LED */
+#if defined(USE_OSL12306_16) || defined(USE_OSL20541) || defined(USE_OSL30561) || defined(USE_GROVE_TM1637) || defined(USE_DFR0090)
+#define USE_NSEG_LED
+#endif /* USE_OSL12306_16 || USE_OSL20541 || USE_OSL30561 || USE_GROVE_TM1637 || defined(USE_DFR0090) */
+
+#if defined(__USE_KT403A_PLAYER__) || defined(__USE_WT2003S_PLAYER__) || defined(__USE_WT2605C_PLAYER__) || defined(__USE_DF_ROBOT_DF_PLAYER_MINI__)
+#define USE_MP3_PLAYER
+#endif /* __USE_KT403A_PLAYER__ || __USE_WT2003S_PLAYER__ || __USE_WT2605C_PLAYER__ || __USE_DF_ROBOT_DF_PLAYER_MINI__ */
+
+#ifdef USE_GIGA_DISPLAY_GFX
+#define GRAPHIC_DISPLAY_HAL_USE_GIGA_DISPLAY_GFX
+#endif /* USE_GIGA_DISPLAY_GFX */
+
+#ifdef USE_BODMER_TFT_ESPI
+#define GRAPHIC_DISPLAY_HAL_USE_BODMER_TFT_ESPI
+#endif /* USE_BODMER_TFT_ESPI */
+
+#ifdef USE_ADAFRUIT_GFX
+#define GRAPHIC_DISPLAY_HAL_USE_ADAFRUIT_GFX
+#endif /* USE_ADAFRUIT_GFX */
+
+#if defined(USE_GIGA_DISPLAY_GFX) ||  defined(USE_BODMER_TFT_ESPI) ||  defined(USE_ADAFRUIT_GFX)
+#define USE_GRAPHIC_DISPLAY
+#endif /* USE_GIGA_DISPLAY_GFX  || USE_BODMER_TFT_ESPI || USE_ADAFRUIT_GFX */
+
+#if defined(USE_GRAPHIC_DISPLAY) || defined(USE_LOG_FILE)
+#define USE_SD
+#endif /* USE_GRAPHIC_DISPLAY || USE_LOG_FILE */
+
+
+
+
+#if defined(USE_NTP) && defined(USE_RTC)
+#error "do not define USE_NTP and USE_RTC togather."
+#endif /* USE_NTP && USE_RTC */
+
+#if defined(USE_MP3_PLAYER) && defined(USE_LOG_FILE)
+#error "USE_MP3_PLAYERとUSE_LOG_FILEを同時にONにできない"
+#endif /* USE_MP3_PLAYER && USE_LOG_FILE */
+
+#endif /* __UNIFIED_MQTT_ACTUATOR_CONFIG_H__ */
