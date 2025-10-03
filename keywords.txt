@@ -1,0 +1,31 @@
+  
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+#SwitchType      KEYWORD1
+#SwitchFunctionReturnValue KEYWORD1
+#Switch          KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+#begin		KEYWORD2
+#on	KEYWORD2
+#off     KEYWORD2
+
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+#SWITCH_TYPE_PULL_UP	LITERAL1
+#SWITCH_TYPE_PULL_DOWN	LITERAL1
+#FUNCTION_UNSUPPORTED	LITERAL1
+#FUNCTION_SUCCESS	LITERAL1
+#FUNCTION_FAIL	LITERAL1
+
+
