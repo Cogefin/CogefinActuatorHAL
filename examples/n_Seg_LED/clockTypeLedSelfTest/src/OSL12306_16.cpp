@@ -37,8 +37,22 @@ uint8_t OSL12306_16::displayOne(uint8_t n, bool dp, char dispChar) {
         } else {
           digitalWrite(_char_pin[i],LOW);
         }
+      } else {
+        if (_pin_mode == OSL12306_16_TYPE_CATHODE_COMMON) {
+          digitalWrite(_char_pin[i],LOW);
+        } else {
+          digitalWrite(_char_pin[i],HIGH);
+        }
       }
       pinState = pinState >> 1;
+    }
+  } else {
+    for (int i= _OSL12306_16_CHAR_PINS -1; i>=0; i--) {
+      if (_pin_mode == OSL12306_16_TYPE_CATHODE_COMMON) {
+        digitalWrite(_char_pin[i],LOW);
+      } else {
+        digitalWrite(_char_pin[i],HIGH);
+      }
     }
   }
   if (dp) {
@@ -85,8 +99,6 @@ uint8_t OSL12306_16::digitOff(uint8_t n) {
   return _OSL12306_16_FUNCTION_SUCCESS;
 }
 
-//uint8_t OSL12306_16::display(uint64_t points, char dispData[]) {
-//uint8_t OSL12306_16::display(uint64_t points, const char dispData[]) {
 uint8_t OSL12306_16::display(uint64_t points, const char dispData[]) {
   for (int i=0; i<_num_digits; i++ ) {
     if ((0b1 & points) > 0) {

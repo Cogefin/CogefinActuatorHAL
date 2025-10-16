@@ -141,7 +141,7 @@
 #define CHARACTER_DISPLAY_MODE_BLINK_BACKLIGHT    13
 #define CHARACTER_DISPLAY_MODE_NO_BLINK_BACKLIGHT 14
 
-//#define LED_COMMAND_CLEAR               1
+#define LED_COMMAND_CLEAR               1
 #define LED_COMMAND_SET_BRIGHTNESS      2
 #define LED_COMMAND_SET_BRIGHTNESS_N    3
 #define LED_COMMAND_SET_RGB             4
@@ -229,11 +229,11 @@
 #define MP3_PLAYER_STORAGE_SPI    2
 #define MP3_PLAYER_STORAGE_UDISK  3
 
-#define MP3_PLAYER_MODE_CYCLE         1
-#define MP3_PLAYER_MODE_SINGLE_CYCLE  2
-#define MP3_PLAYER_MODE_DIR_CYCLE     3
-#define MP3_PLAYER_MODE_RANDOM        4
-#define MP3_PLAYER_MODE_SINGLE_SHOT   5
+#define MP3_PLAYER_MODE_CYCLE         0
+#define MP3_PLAYER_MODE_SINGLE_CYCLE  1
+#define MP3_PLAYER_MODE_DIR_CYCLE     2
+#define MP3_PLAYER_MODE_RANDOM        3
+#define MP3_PLAYER_MODE_SINGLE_SHOT   4
 
 #define GRAPHIC_DISPLAY_COMMAND_FILL    1
 #define GRAPHIC_DISPLAY_COMMAND_STRING  2
@@ -265,8 +265,9 @@ extern void updateDeviceTable(uint8_t id, uint32_t type, PMW *  ss);
 
 #ifdef USE_IRDA
 //extern void updateDeviceTable(uint8_t id, uint32_t type, IRsend * ss) ;
-extern void updateDeviceTable(uint8_t id, uint32_t type) ;
-extern void init_ir_sender(uint8_t pin, uint8_t id);
+//extern void updateDeviceTable(uint8_t id, uint32_t type) ;
+//extern void init_ir_sender(uint8_t pin, uint8_t id);
+extern void init_ir_sender(uint8_t id, uint32_t type, uint8_t pin);
 #endif /* USE_IRDA */
 
 #ifdef USE_NSEG_LED
@@ -283,6 +284,10 @@ extern void updateDeviceTable(uint8_t id, uint32_t type, UnifiedGraphicDisplay *
 
 extern bool controlActuator(JsonDocument doc);
 extern void keepStateActuator(void);
+
+extern void initDeviceTable(void);
+extern void dumpDeviceTable(void);
+
 #endif /* __ACTUATOR_HAL_H__ */
 
 

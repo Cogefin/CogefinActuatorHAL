@@ -61,6 +61,14 @@ uint8_t OSL30561::displayOne(uint8_t n, bool point, char dispChar) {
       }
       pinState = pinState >> 1;
     }
+  } else {
+    for (int i= _OSL30561_CHAR_PINS -1; i>=0; i--) {
+      if (_pin_mode == OSL30561_TYPE_CATHODE_COMMON) {
+        digitalWrite(_char_pin[i],LOW);
+      } else {
+        digitalWrite(_char_pin[i],HIGH);
+      }
+    }
   }
   if (point) {
     pointOn();
@@ -106,8 +114,6 @@ uint8_t OSL30561::digitOff(uint8_t n) {
   return _OSL30561_FUNCTION_SUCCESS;
 }
 
-//uint8_t OSL30561::display(uint64_t points, char dispData[]) {
-//uint8_t OSL30561::display(uint32_t points, const char dispData[]) {
 uint8_t OSL30561::display(uint64_t points, const char dispData[]) {
   for (int i=0; i<_num_digits; i++ ) {
     if ((0b1 & points) > 0) {

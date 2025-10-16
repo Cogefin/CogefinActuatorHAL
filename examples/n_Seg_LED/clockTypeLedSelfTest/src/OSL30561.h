@@ -57,9 +57,6 @@ public:
   OSL30561(bool type, uint8_t pin_a, uint8_t pin_b, uint8_t pin_c, uint8_t pin_d, uint8_t pin_e, uint8_t pin_f, uint8_t pin_g, uint8_t pin_dp, uint8_t num, uint8_t * ptr);
   uint8_t clear(void);
   uint8_t display(uint64_t points, const char dispData[]);
-  //uint8_t display(uint64_t points, const char dispData[]);
-  //uint8_t display(uint32_t points, const char dispData[]);
-  //uint8_t display(uint64_t points, char dispData[]);
   void begin(void);
 private:
   void pointOn(void);

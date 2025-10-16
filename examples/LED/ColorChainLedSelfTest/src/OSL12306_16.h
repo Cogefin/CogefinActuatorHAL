@@ -59,7 +59,6 @@ class OSL12306_16 {
 public:
   OSL12306_16(bool pin_mode, uint8_t * char_pin_list, uint8_t pin_dp, uint8_t num, uint8_t * digit_pin_list);
   uint8_t clear(void);
-  //uint8_t display(uint64_t points, const char dispData[]);
   uint8_t display(uint64_t points, const char dispData[]);
   void begin(void);
 private:

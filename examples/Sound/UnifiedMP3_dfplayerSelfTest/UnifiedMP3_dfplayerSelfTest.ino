@@ -289,27 +289,27 @@ void mp3_play_directory_by_name(const char* dir, uint32_t fileNumber, UnifiedMp3
   }
 }
 
-void mp3_loop_dir(int folderNumber) {
+void mp3_loop_dir(int index) {
   JsonDocument doc;
   doc["id"] = mp3_num;
   doc["type"] = MP3_PLAYER_TYPE;
   doc["time"] = millis();
   doc["command"] = MP3_PLAYER_COMMAND_LOOP_DIR;
   doc["paramSize"] = 1;
-  doc["param"][0]["index"] = folderNumber;
+  doc["param"][0]["index"] = index;
   if (false == controlActuator(doc)) {
     Serial.println("exec loopDirectory() : fail");
   }
 }
 
-void mp3_play_mp3_dir(int folderNumber) {
+void mp3_play_mp3_dir(int index) {
   JsonDocument doc;
   doc["id"] = mp3_num;
   doc["type"] = MP3_PLAYER_TYPE;
   doc["time"] = millis();
   doc["command"] = MP3_PLAYER_COMMAND_PLAY_MP3_DIR;
   doc["paramSize"] = 1;
-  doc["param"][0]["index"] = folderNumber;
+  doc["param"][0]["index"] = index;
   if (false == controlActuator(doc)) {
     Serial.println("exec playMp3Directory() : fail");
   }

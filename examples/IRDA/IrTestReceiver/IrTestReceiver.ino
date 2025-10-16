@@ -147,7 +147,7 @@ void final() {
   uint8_t success=0;
   uint8_t skip = 0;
   uint8_t error = 0;
-  for (int i=3; i< 31; i++) {
+  for (int i=3; i< (FAST+1); i++) {
     Serial.print("Protocol - ");Serial.print(protocolName[i]);Serial.print(" : ");
     if (checkResult[i]==2) {
       Serial.println("***error***");
@@ -179,11 +179,7 @@ void loop() {
         if (checkResult[APPLE]!=1) {
           checkResult[APPLE]=checkData(IrReceiver.decodedIRData);
         };
-        IrReceiver.stop();
-        printIrData();
-        final();
-        return ;
-        //break;
+        break;
       };
       case DENON: {
         if (checkResult[DENON]!=1) {
@@ -233,7 +229,11 @@ void loop() {
         if (checkResult[PANASONIC]!=1) {
           checkResult[PANASONIC]=checkData(IrReceiver.decodedIRData);
         }
-        break;
+        IrReceiver.stop();
+        printIrData();
+        final();
+        return ;
+        //break;
       };
       case KASEIKYO_DENON: {
         if (checkResult[KASEIKYO_DENON]!=1) {

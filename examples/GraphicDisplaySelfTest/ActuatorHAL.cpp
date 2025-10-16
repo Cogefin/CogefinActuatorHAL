@@ -58,6 +58,96 @@ typedef struct deviceManagementTable {
 
 DeviceManagementTable deviceTable[NUM_OF_DEVICES];
 
+void initDeviceTable(void) {
+  for (int i=0; i<NUM_OF_DEVICES; i++ ) {
+    deviceTable[i].type=0;
+  }
+}
+
+void dumpDeviceTable(void) {
+  Serial.println("");
+  for (int i=0; i<NUM_OF_DEVICES; i++ ) {
+    switch(deviceTable[i].type) {
+      case CHARACTER_DISPLAY_TYPE_GROVE_LCD_RGB_BACKLIGHT: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("CHARACTER_DISPLAY_TYPE_GROVE_LCD_RGB_BACKLIGHT");break;
+      }
+      case CHARACTER_DISPLAY_TYPE_ACM1602NI: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("CHARACTER_DISPLAY_TYPE_ACM1602NI");break;
+      }
+      case CHARACTER_DISPLAY_TYPE_LIQUID_CRYSTAL: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("CHARACTER_DISPLAY_TYPE_LIQUID_CRYSTAL");break;
+      }
+      case LED_TYPE_MONO_LED: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("LED_TYPE_MONO_LED");break;
+      }
+      case LED_TYPE_MONO_CHAIN_LED: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("LED_TYPE_MONO_CHAIN_LED");break;
+      }
+      case LED_TYPE_COLOR_LED: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("LED_TYPE_COLOR_LED");break;
+      }
+      case LED_TYPE_COLOR_CHAIN_LED: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("LED_TYPE_COLOR_CHAIN_LED");break;
+      }
+      case NSEG_LED_TYPE_OSL12306_16: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("NSEG_LED_TYPE_OSL12306_16");break;
+      }
+      case NSEG_LED_TYPE_OSL20541: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("NSEG_LED_TYPE_OSL20541");break;
+      }
+      case NSEG_LED_TYPE_OSL30561: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("NSEG_LED_TYPE_OSL30561");break;
+      }
+      case NSEG_LED_TYPE_GROVE_TM1637: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("NSEG_LED_TYPE_GROVE_TM1637");break;
+      }
+      case NSEG_LED_TYPE_DFR0090: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("NSEG_LED_TYPE_DFR0090");break;
+      }
+      case SIMPLE_SWITCH_TYPE_NORMAL: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("SIMPLE_SWITCH_TYPE_NORMAL");break;
+      }
+      case SERVO_TYPE_SIMPLE: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("SERVO_TYPE_SIMPLE");break;
+      }
+      case SIMPLE_SOUND_TYPE_NORMAL: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("SIMPLE_SOUND_TYPE_NORMAL");break;
+      }
+      case PMW_TYPE_SIMPLE: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("PMW_TYPE_SIMPLE");break;
+      }
+      case IRDA_TYPE_SIMPLE: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("IRDA_TYPE_SIMPLE");break;
+      }
+      case MP3_PLAYER_TYPE_KT403A: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("MP3_PLAYER_TYPE_KT403A");break;
+      }
+      case MP3_PLAYER_TYPE_WT2003S: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("MP3_PLAYER_TYPE_WT2003S");break;
+      }
+      case MP3_PLAYER_TYPE_WT2605C: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("MP3_PLAYER_TYPE_WT2605C");break;
+      }
+      case MP3_PLAYER_TYPE_DF_ROBOT_DFP: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("MP3_PLAYER_TYPE_DF_ROBOT_DFP");break;
+      }
+      case GRAPHIC_DISPLAY_TYPE_U8G2: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("GRAPHIC_DISPLAY_TYPE_U8G2");break;
+      }
+      case GRAPHIC_DISPLAY_TYPE_GIGA_DISPLAY: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("GRAPHIC_DISPLAY_TYPE_GIGA_DISPLAY");break;
+      }
+      case GRAPHIC_DISPLAY_TYPE_BODMER_TFT: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("GRAPHIC_DISPLAY_TYPE_BODMER_TFT");break;
+      }
+      case GRAPHIC_DISPLAY_TYPE_ADAFRUIT_GFX: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("GRAPHIC_DISPLAY_TYPE_ADAFRUIT_GFX");break;
+      }
+    }
+  }
+  Serial.println("");
+}
+
 #ifdef USE_CHARACTER_DISPLAY
 void updateDeviceTable(uint8_t id, uint32_t type, UnifiedLCD * characterDisplay_pointer) {
   deviceTable[id].type = type;
@@ -265,6 +355,12 @@ bool controlCharacterDisplay(JsonDocument doc) {
 }
 
 #ifdef USE_LED
+void ledClear(uint8_t id) {
+  deviceTable[id].led->clear();
+}
+#endif /* USE_LED */
+
+#ifdef USE_LED
 void ledSetBrightness(uint8_t id, float brightness) {
   deviceTable[id].led->setLed(brightness);
 }
@@ -311,6 +407,10 @@ bool controlLED(JsonDocument doc) {
   uint8_t command = doc["command"];
   uint8_t id = doc["id"];
   switch(command) {
+    case LED_COMMAND_CLEAR: {
+      ledClear(id);
+      break;
+    }
     case LED_COMMAND_SET_BRIGHTNESS: {
       ledSetBrightness(id, doc["param"][0]["brightness"]);
       break;
@@ -737,10 +837,10 @@ bool controlIRDA(JsonDocument doc) {
       break;
     }
     case IRDA_COMMAND_APPLE: {
-      uint16_t address = doc["param"][0]["address"];
-      uint16_t comm = doc["param"][0]["command"];
+      uint8_t did = doc["param"][0]["did"];
+      uint8_t comm = doc["param"][0]["command"];
       int_fast8_t repeats = doc["param"][0]["repeats"];
-      IrSender.sendApple(address, comm, repeats);
+      IrSender.sendApple(did, comm, repeats);
       //deviceTable[id].ir_sender->sendApple(address, comm, repeats);
       break;
     }
@@ -1120,9 +1220,7 @@ bool graphicDisplayPrintString(uint8_t id, uint16_t x, uint16_t y, uint16_t fg, 
 
 #ifdef USE_GRAPHIC_DISPLAY
 void graphicDisplayPrintJPEG(uint16_t x, uint16_t y, const char* filename ) {
-  //Serial.print("filename2 : ");Serial.println(filename);
   TJpgDec.drawSdJpg(x, y, filename);
-  //TJpgDec.drawSdJpg(0, 0, "/panda.jpg");
 }
 #endif /* USE_GRAPHIC_DISPLAY */
 
@@ -1226,10 +1324,10 @@ void keepStateActuator() {
 }
 
 #ifdef USE_IRDA
-void init_ir_sender(uint8_t pin, uint8_t id) {
-  IrSender.begin(IR_PIN);
+void init_ir_sender(uint8_t id, uint32_t type, uint8_t pin) {
+  IrSender.begin(pin);
   disableLEDFeedback();
   //updateDeviceTable(id, IRDA_TYPE_SIMPLE, &IrSender);
-  updateDeviceTable(id, IRDA_TYPE_SIMPLE);
+  updateDeviceTable(id, type);
 }
 #endif /* USE_IRDA */

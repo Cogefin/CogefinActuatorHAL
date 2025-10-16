@@ -136,21 +136,24 @@
 |[Ardino MKR Zero][MKRZero]|-|✕2|
 |[Arduino Nano RP2040 Connect][NanoRP2040Connect]|-||
 
+|内容|意味|
+|---|---|
+|◯|動作する|
+|△|動作電圧の変換等を行えば動作する|
+|▲|一部の機能が動作しない|
+|✕|動作しない|
+|-|原理的に互換性がない|
+|未|未検証|
+
 - 1 : [ILI9341搭載2.8インチSPI制御タッチパネル付TFT液晶][MSP2807]付属のSDスロットへのアクセスでシステムが止まる．
 - 2 : MKR Zeroだけでなく，MKRシリーズは[ILI9341搭載2.8インチSPI制御タッチパネル付TFT液晶][MSP2807]付属のSDスロットへのアクセスで失敗する．
 
 ## 利用デバイス
 
-[GIGA Display Shield][GigaDisplayShield]|
-[ILI9341搭載2.8インチSPI制御タッチパネル付TFT液晶][MSP2807]
-
-
-|名称|コントローラ|電圧(V)|
-|---|---|---|
-|[Grove - MP3 v2.0][GroveMP3v2]|KT403A|5|
-|[Grove - MP3 v3.0][GroveMP3v3]|WT2003S-20SS|3.3/5|
-|[Grove - MP3 v4.0][GroveMP3v4]|WT2605CX|5|
-|[DFPlayer - A Mini MP3 Player][DFRobotDFPlayerMini]|DFROBOT LISP3|3.3/5|
+|名称|電圧(V)|
+|---|---|
+|[GIGA Display Shield][GigaDisplayShield]|3.3|
+|[ILI9341搭載2.8インチSPI制御タッチパネル付TFT液晶][MSP2807]|3.3|
 
 <!-- |モノクロ|[Grove OLED  v1.1][GroveOLEDv1.1]|3.3～5.5| -->
 

@@ -85,7 +85,7 @@ unsigned int stage=0;
 unsigned int test=1;
 unsigned long lastTime=0;
 
-#define MAX_TEST 3
+#define MAX_TEST 5
 
 struct testResultEntity {
   bool result;
@@ -549,6 +549,194 @@ void test3() {
   }
 }
 
+void test4_stage0() {
+  // テスト内容の説明
+  Serial.println("=== action ===");
+#if PRINTABLE_CHAR_NUM==38
+  Serial.println("_x. (x:-,0,1...,a,b,c...z) _ means space");
+#else
+  Serial.println("_x. (x:-,0,1...,a,b,c,d,e,f) _ means space");
+#endif
+  Serial.println("");
+  waitForStart();
+
+  Serial.println("test4 start.");
+  stage =1;
+}
+
+void test4() {
+  nSegLedFunctionReturnValue value;
+  String about = "test4";
+
+  if (stage==0) {
+    printStartMessage(about, 3);
+    clearDispData();
+    test4_stage0();
+    lastTime=millis();
+  } else if ((stage>0) &&(stage <(PRINTABLE_CHAR_NUM))) {
+    for (int i=0; i< DIGITS;i++) {
+      dispData[i]=' ';
+    }
+    int j=DIGITS-1;
+    switch(stage) {
+      case 1: {dispData[j]='-';break;}
+      case 2: {dispData[j]='0';break;}
+      case 3: {dispData[j]='1';break;}
+      case 4: {dispData[j]='2';break;}
+      case 5: {dispData[j]='3';break;}
+      case 6: {dispData[j]='4';break;}
+      case 7: {dispData[j]='5';break;}
+      case 8: {dispData[j]='6';break;}
+      case 9: {dispData[j]='7';break;}
+      case 10: {dispData[j]='8';break;}
+      case 11: {dispData[j]='9';break;}
+      case 12: {dispData[j]='a';break;}
+      case 13: {dispData[j]='b';break;}
+      case 14: {dispData[j]='c';break;}
+      case 15: {dispData[j]='d';break;}
+      case 16: {dispData[j]='e';break;}
+      case 17: {dispData[j]='f';break;}
+#if PRINTABLE_CHAR_NUM==38
+      case 18: {dispData[j]='g';break;}
+      case 19: {dispData[j]='h';break;}
+      case 20: {dispData[j]='i';break;}
+      case 21: {dispData[j]='j';break;}
+      case 22: {dispData[j]='k';break;}
+      case 23: {dispData[j]='l';break;}
+      case 24: {dispData[j]='m';break;}
+      case 25: {dispData[j]='n';break;}
+      case 26: {dispData[j]='o';break;}
+      case 27: {dispData[j]='p';break;}
+      case 28: {dispData[j]='q';break;}
+      case 29: {dispData[j]='r';break;}
+      case 30: {dispData[j]='s';break;}
+      case 31: {dispData[j]='t';break;}
+      case 32: {dispData[j]='u';break;}
+      case 33: {dispData[j]='v';break;}
+      case 34: {dispData[j]='w';break;}
+      case 35: {dispData[j]='x';break;}
+      case 36: {dispData[j]='y';break;}
+      case 37: {dispData[j]='z';break;}
+#endif
+    }
+    uint32_t flag = (stage-1) % max_loop ;
+
+    led_display_with_period(flag, dispData);
+
+    unsigned long currentTime=millis();
+    if (1500 < (currentTime - lastTime)) {
+      lastTime = currentTime;
+      stage++;
+    };
+  } else {
+    checkTestResult(about, 3);
+    Serial.println("");
+    Serial.println("");
+
+    value = nSegLed.clear();
+    checkReturnValue(value, FUNCTION_CLEAR);
+
+    test++;
+    stage=0;
+    clearDispData();
+  }
+}
+
+
+void test5_stage0() {
+  // テスト内容の説明
+  Serial.println("=== action ===");
+#if PRINTABLE_CHAR_NUM==38
+  Serial.println("x_. (x:-,0,1...,a,b,c...z) _ means space");
+#else
+  Serial.println("x_. (x:-,0,1...,a,b,c,d,e,f) _ means space");
+#endif
+  Serial.println("");
+  waitForStart();
+
+  Serial.println("test5 start.");
+  stage =1;
+}
+
+void test5() {
+  nSegLedFunctionReturnValue value;
+  String about = "test5";
+
+  if (stage==0) {
+    printStartMessage(about, 4);
+    clearDispData();
+    test5_stage0();
+    lastTime=millis();
+  } else if ((stage>0) &&(stage <(PRINTABLE_CHAR_NUM))) {
+    for (int i=0; i< DIGITS;i++) {
+      dispData[i]=' ';
+    }
+    int j=DIGITS-1;
+    switch(stage) {
+      case 1: {dispData[0]='-';break;}
+      case 2: {dispData[0]='0';break;}
+      case 3: {dispData[0]='1';break;}
+      case 4: {dispData[0]='2';break;}
+      case 5: {dispData[0]='3';break;}
+      case 6: {dispData[0]='4';break;}
+      case 7: {dispData[0]='5';break;}
+      case 8: {dispData[0]='6';break;}
+      case 9: {dispData[0]='7';break;}
+      case 10: {dispData[0]='8';break;}
+      case 11: {dispData[0]='9';break;}
+      case 12: {dispData[0]='a';break;}
+      case 13: {dispData[0]='b';break;}
+      case 14: {dispData[0]='c';break;}
+      case 15: {dispData[0]='d';break;}
+      case 16: {dispData[0]='e';break;}
+      case 17: {dispData[0]='f';break;}
+#if PRINTABLE_CHAR_NUM==38
+      case 18: {dispData[0]='g';break;}
+      case 19: {dispData[0]='h';break;}
+      case 20: {dispData[0]='i';break;}
+      case 21: {dispData[0]='j';break;}
+      case 22: {dispData[0]='k';break;}
+      case 23: {dispData[0]='l';break;}
+      case 24: {dispData[0]='m';break;}
+      case 25: {dispData[0]='n';break;}
+      case 26: {dispData[0]='o';break;}
+      case 27: {dispData[0]='p';break;}
+      case 28: {dispData[0]='q';break;}
+      case 29: {dispData[0]='r';break;}
+      case 30: {dispData[0]='s';break;}
+      case 31: {dispData[0]='t';break;}
+      case 32: {dispData[0]='u';break;}
+      case 33: {dispData[0]='v';break;}
+      case 34: {dispData[0]='w';break;}
+      case 35: {dispData[0]='x';break;}
+      case 36: {dispData[0]='y';break;}
+      case 37: {dispData[0]='z';break;}
+#endif
+    }
+    uint32_t flag = (stage-1) % max_loop ;
+
+    led_display_with_period(flag, dispData);
+
+    unsigned long currentTime=millis();
+    if (1500 < (currentTime - lastTime)) {
+      lastTime = currentTime;
+      stage++;
+    };
+  } else {
+    checkTestResult(about, 4);
+    Serial.println("");
+    Serial.println("");
+
+    value = nSegLed.clear();
+    checkReturnValue(value, FUNCTION_CLEAR);
+
+    test++;
+    stage=0;
+    clearDispData();
+  }
+}
+
+
 void setup() {
 
   Serial.begin(9600);
@@ -569,12 +757,6 @@ void setup() {
 
   clearDispData();
 
-#if 0
-  test1();
-  test2();
-  test3();
-  sumTestResult();
-#endif
 }
 
 void loop() {
@@ -589,11 +771,16 @@ void loop() {
       test3();break;
     }
     case 4: {
+      test4();break;
+    }
+    case 5: {
+      test5();break;
+    }
+    case 6: {
       sumTestResult();break;
     }
   }
 }
-
 
 
 

@@ -438,7 +438,7 @@ void sendOnkyo() {
   doc["id"] = irda_num;
   doc["type"] = IRDA_TYPE_SIMPLE;
   doc["time"] = millis();
-  doc["command"] = IRDA_COMMAND_NEC_2;
+  doc["command"] = IRDA_COMMAND_ONKYO;
   doc["paramSize"] = 1;
   doc["param"][0]["address"] = addr;
   doc["param"][0]["command"] = sCommand;
@@ -714,8 +714,6 @@ void runTest() {
   delay(INTERVAL);
   sendSony();
   delay(INTERVAL);
-  sendPanasonic();
-  delay(INTERVAL);
   sendDenon();
   delay(INTERVAL);
   sendLG();
@@ -743,6 +741,8 @@ void runTest() {
   sendNEC2();
   delay(INTERVAL);
   sendApple();
+  delay(INTERVAL);
+  sendPanasonic();
 }
 
 void waitForStart(void){
@@ -804,7 +804,8 @@ void setup() {
   /*
    * The IR library setup. That's all!
    */
-  init_ir_sender(IR_SEND_PIN,deviceCounter);
+  //init_ir_sender(IR_SEND_PIN,deviceCounter);
+  init_ir_sender(deviceCounter, IRDA_TYPE_SIMPLE, IR_SEND_PIN);
   //init_ir_sender(3,deviceCounter);
   //IrSender.begin(); // Start with IR_SEND_PIN -which is defined in PinDefinitionsAndMore.h- as send pin and enable feedback LED at default feedback LED pin
   //disableLEDFeedback(); // Disable feedback LED at default feedback LED pin

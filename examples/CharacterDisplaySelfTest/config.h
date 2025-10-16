@@ -9,8 +9,8 @@
 /* character display */
 //#define USE_GROVE_LCD
 //#define USE_ACM1602NI
-//#define USE_SC1602BSLB
-#define USE_SC2004CSLB
+#define USE_SC1602BSLB
+//#define USE_SC2004CSLB
 
 /* LED */
 //#define GROVE_NEO_PIXEL
