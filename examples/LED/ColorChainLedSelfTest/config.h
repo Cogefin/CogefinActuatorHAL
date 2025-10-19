@@ -3,8 +3,8 @@
 #define __UNIFIED_MQTT_ACTUATOR_CONFIG_H__
 
 #include "src/arduinoHardwareHelper.h"
-#include "src/detectArduinoHardware.h"
-#include "src/ArduinoShieldConverter.h"
+//#include "src/detectArduinoHardware.h"
+//#include "src/ArduinoShieldConverter.h"
 
 /* character display */
 //#define USE_GROVE_LCD
