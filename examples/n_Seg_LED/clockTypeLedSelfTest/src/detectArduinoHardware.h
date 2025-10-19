@@ -3850,6 +3850,7 @@ Labplus mPython
 
 
 #if CPU_TYPE!=TYPE_ESP32 || ! defined(BOARD_USES_HW_GPIO_NUMBERS)
+#ifndef D0
 #define D0 0
 #define D1 1
 #define D2 2
@@ -3904,6 +3905,7 @@ Labplus mPython
 #define D51 51
 #define D52 52
 #define D53 53
+#endif /* D0 */
 #endif /* CPU_TYPE!=TYPE_ESP32 || ! defined(BOARD_USES_HW_GPIO_NUMBERS) */
 
 /*
