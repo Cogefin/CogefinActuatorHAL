@@ -279,7 +279,7 @@
 //#define PMW_PIN D6
 
 /* IRDA */
-#define IR_PIN         D3
+#define IR_PIN         IR_SEND_PIN
 
 /* MP3 player */
 #define SOFTWARE_SERIAL_PIN_RX D2
