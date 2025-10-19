@@ -794,7 +794,8 @@ void setup() {
 
   Serial.println("");
   Serial.println("");
-  Serial.println("device and device driver test of IRDA.");
+  Serial.print("device and device driver test of IRDA , ir-led pin number : ");Serial.println(IR_PIN);
+
 
   // Just to know which program is running on my Arduino
   //Serial.println(F("START " __FILE__ " from " __DATE__ "\r\nUsing library version " VERSION_IRREMOTE));
