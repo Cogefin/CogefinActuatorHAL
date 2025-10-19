@@ -258,11 +258,9 @@
 |[Arduino M0 pro][M0Pro]|◯|◯|
 |[Arduino UNO R4 Minima][UnoR4Minima]|◯|◯|
 |[Arduino Nano 33 IoT][Nano33IoT]|◯|◯|
-|[Arduino Giga R1 Wifi][GigaR1WiFi]|◯|✕1|
+|[Arduino Giga R1 Wifi][GigaR1WiFi]|◯|◯|
 |[Ardino MKR Zero][MKRZero]|◯|◯|
 |[Arduino Nano RP2040 Connect][NanoRP2040Connect]|||
-
-- 1 : 色の出方がおかしい．
 
 
 |内容|意味|
