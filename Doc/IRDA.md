@@ -509,22 +509,23 @@
 
 |機種名|結果|LEDピン番号|
 |---|---|---|
-|[Arduino Nano ESP32][NanoESP32]|✕||
+|[Arduino Nano ESP32][NanoESP32]|△1|D4|
 |[Arduino Mega 2560][Mega2560]|△1|D3|
-|[Arduino M0 pro][M0Pro]|✕||
+|[Arduino M0 pro][M0Pro]|✕3||
 |[Arduino UNO R4 Minima][UnoR4Minima]|△1|D3|
 |[Arduino Nano 33 IoT][Nano33IoT]|△1|D3|
-|[Arduino Giga R1 Wifi][GigaR1WiFi]|✕||
-|[Ardino MKR Zero][MKRZero]|△1||
+|[Arduino Giga R1 Wifi][GigaR1WiFi]|✕2||
+|[Ardino MKR Zero][MKRZero]|△1|D3|
 |[Arduino Nano RP2040 Connect][NanoRP2040Connect]|||
 
+- 2 : 赤外線リモコンのライブラリ(IRremote)がGigaはサポート範囲外の上，スケッチ動作開始しても，受信側では何も受信できない．
+- 3 : スケッチ動作開始時から，シリアルが動作しなくなる．
 
 ### 注1
 以下のプロトコルは受信側Arduinoでは認識できない/認識に失敗しやすい
+- Bang Olufsen : 全く認識されない
 - JVC : 全く認識されない
 - LG2 : PULSE_DISTANCEと認識される
-- Bang Olufsen : 全く認識されない
-- Onkyo : NECもしくはNECv2と誤認される
 - Lego PF : プロトコル番号は認識されるが中身(各種パラメータ)が独自のエンコードがされており，確認が困難なため，中身の確認はしていない
 - シャープ : bit単位の認識のミスでエラーになりやすい
 - Denon : 認識に失敗する確率が高い
