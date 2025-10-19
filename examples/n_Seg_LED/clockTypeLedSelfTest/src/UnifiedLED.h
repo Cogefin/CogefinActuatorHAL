@@ -53,6 +53,7 @@ public:
   UnifiedLED(uint8_t pin, UnifiedLedMode mode);
   UnifiedLED(uint8_t r_pin, uint8_t g_pin, uint8_t b_pin, UnifiedLedMode mode);
   ledFunctionReturnValue begin();
+  ledFunctionReturnValue clear();
   ledFunctionReturnValue setLevel(float level);
   ledFunctionReturnValue setMode(UnifiedLedMode mode);
   ledFunctionReturnValue setLedNum(uint32_t count);
