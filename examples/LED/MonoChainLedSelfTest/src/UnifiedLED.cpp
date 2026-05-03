@@ -337,11 +337,11 @@ ledFunctionReturnValue UnifiedLED::begin() {
       my9221->begin();
       return LED_FUNCTION_SUCCESS;
 #endif /* LED_HAL_USE_MY9221 */
-#ifdef LED_HAL_USE_P98X3
-    case P98X3_LED:
-      p98x3->init();
-      return LED_FUNCTION_SUCCESS;
-#endif /* LED_HAL_USE_P98X3 */
+//#ifdef LED_HAL_USE_P98X3
+//    case P98X3_LED:
+//      p98x3->init();
+//      return LED_FUNCTION_SUCCESS;
+//#endif /* LED_HAL_USE_P98X3 */
 #ifdef LED_HAL_USE_NEO_PIXEL
     case NEO_PIXEL_LED:
       neoPixel->begin();

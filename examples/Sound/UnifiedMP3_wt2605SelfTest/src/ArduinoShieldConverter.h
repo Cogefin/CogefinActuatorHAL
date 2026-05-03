@@ -85,10 +85,10 @@
 #define SPI_MOSI     11
 #endif
 #ifndef I2C_SDA
-#define I2C_SDA      18
+#define I2C_SDA      A4
 #endif
 #ifndef I2C_SCL
-#define I2C_SCL      19
+#define I2C_SCL      A5
 #endif
 #else /* Classic etc.*/
 #define DIGITAL_0_RX  0

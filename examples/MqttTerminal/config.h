@@ -9,7 +9,8 @@
 /* character display */
 //#define USE_GROVE_LCD
 //#define USE_ACM1602NI
-//#define USE_SC1602BSLB
+//#define USE_ACM2004
+#define USE_SC1602BSLB
 //#define USE_SC2004CSLB
 
 /* LED */
@@ -36,9 +37,7 @@
 //#define BUZZER
 //#define SPEAKER
 
-#if defined(BUZZER) || defined(SPEAKER)
-#define USE_SIMPLE_SOUND
-#endif /* defined(BUZZER) || defined(SPEAKER) */
+
 
 /* PMW */
 //#define USE_PMW
@@ -54,7 +53,7 @@
 //#define __USE_KT403A_PLAYER__
 //#define __USE_WT2003S_PLAYER__
 //#define __USE_WT2605C_PLAYER__
-#define __USE_DF_ROBOT_DF_PLAYER_MINI__
+//;#define __USE_DF_ROBOT_DF_PLAYER_MINI__
 
 /* Graphic Display */
 //#define USE_GIGA_DISPLAY_GFX // Gigaのみ対応
@@ -67,33 +66,24 @@
 
 
 /* LCD pin etc. */
-#ifdef USE_GROVE_LCD
-#define CHARACTER_DISPLAY_GROVE_LCD_COLOMNS 16
-#define CHARACTER_DISPLAY_GROVE_LCD_LINES    2
-#endif /* USE_GROVE_LCD */
-
-#ifdef USE_ACM1602NI
-#define CHARACTER_DISPLAY_ACM1602NI_COLOMNS 16
-#define CHARACTER_DISPLAY_ACM1602NI_LINES    2
-#endif /* USE_ACM1602NI */
-
-#ifdef USE_SC1602BSLB
-#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_COLOMNS 16
-#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_LINES    2
-#endif /* USE_SC1602BSLB */
-
-#ifdef USE_SC2004CSLB
-#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_COLOMNS 20
-#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_LINES    4
-#endif /* USE_SC2004CSLB */
-
+#if 0
 #define LIQUID_CRYSTAL_PIN_RS D6
 #define LIQUID_CRYSTAL_PIN_ES D7
 #define LIQUID_CRYSTAL_PIN_D4 D4
 #define LIQUID_CRYSTAL_PIN_D5 D5
 #define LIQUID_CRYSTAL_PIN_D6 D2
 #define LIQUID_CRYSTAL_PIN_D7 D3
+#endif
 
+#define LIQUID_CRYSTAL_PIN_RS D4
+#define LIQUID_CRYSTAL_PIN_ES D5
+#define LIQUID_CRYSTAL_PIN_D4 D2
+#define LIQUID_CRYSTAL_PIN_D5 D3
+#define LIQUID_CRYSTAL_PIN_D6 D0
+#define LIQUID_CRYSTAL_PIN_D7 D1
+
+#define GROVE_4DIGIT_LCD_CLK_PIN D2
+#define GROVE_4DIGIT_LCD_DATA_PIN D3
 
 /* LED */
 #define GROVE_LED_BAR_PIN_CLK   D3
@@ -137,7 +127,9 @@
 #define USE_SIMPLE_COLOR_LED_PIN_TYPE PULL_UP
 //#define USE_SIMPLE_COLOR_LED_PIN_TYPE PULL_DOWN
 
-#define GROVE_MONO_LED_PIN  D6
+//#define GROVE_MONO_LED_PIN  D6
+//#define GROVE_MONO_LED_PIN  D2
+#define GROVE_MONO_LED_PIN  D3
 //#define GROVE_MONO_LED_PIN_TYPE PULL_DOWN
 #define GROVE_MONO_LED_PIN_TYPE PULL_UP
 
@@ -350,15 +342,18 @@
 #define BUFFER_SIZE 512
 #define SERIAL_SPEED 9600
 #undef USE_ETHERNET
-#define ETHERNET_CHIP_SELECT D10
+//#define ETHERNET_CHIP_SELECT D10  // Classic Eth シールド
+#define ETHERNET_CHIP_SELECT D5 // MKR Eth シールド
 #define USE_WIFI
 #define SSID_STR "Buffalo-G-9C50"
 #define WIFI_PASS "jxgdekvmujfyh"
 #define FIX_MAC_ADDRESS 0x90, 0xa2, 0xda, 0x10, 0x11, 0x51
 #define USE_DHCP
-#define SELF_IP_ADDRESS 192, 168, 1, 111
-#define DNS_SERVER_ADDRESS 192, 168, 1, 254
-#define GATEWAY_ADDRESS 192, 168, 1, 254
+#define SELF_IP_ADDRESS 10, 1, 1, 111
+//#define DNS_SERVER_ADDRESS 192, 168, 1, 254
+//#define GATEWAY_ADDRESS 192, 168, 1, 254
+#define DNS_SERVER_ADDRESS 10, 1, 1, 254
+#define GATEWAY_ADDRESS 10, 1, 1, 254
 #define NETMASK 255, 255, 255, 0
 #undef USE_MQTT_AUTH
 #define MQTT_AUTH_USERNAME "foo"
@@ -368,10 +363,9 @@
 #define MQTT_SERVER_ADDR "10.1.1.254"
 #define MQTT_PORT 1883
 
-#undef USE_LED_INDICATOR
-#define LED_INDICATOR_PIN_CLK D2
-#define LED_INDICATOR_PIN_DATA D3
-//#define INDICATOR_DURATION 3000
+#define USE_LED_INDICATOR
+#define LED_INDICATOR_PIN D7
+//#define LED_INDICATOR_PIN D6
 #define INDICATOR_SHORT_DURATION 1000
 
 #define HOSTNAME "Uno_R4_WiFi"
@@ -381,136 +375,39 @@
 
 #undef USE_SYSLOG_SERVER
 #undef USE_LOG_FILE
-#undef LOG_ROTATE
+#undef LOG_ROTATE  // esp32のみ
 #define LOGFILE_NAME_HEAD "/syslog"
 #define LOG_FILE_SIZE_MAX 10000000
 #define USE_LOG_SERIAL
 
-#undef USE_FS_H // file system type
+#if 0
+#undef USE_FS_H // file system type MKR ✕, esp32 ◯, Giga R1 ✕, Nano33 IoT , Uno R4 ✕
 #undef SD_FAT
+#endif /* 0 */
+
 #define SD_CS_PIN D8
 
 
 
-#undef USE_RTC
+#define USE_RTC
+
+#undef USE_RTC8564NB
+#undef USE_DS1307
+#undef USE_DS3231
 #define USE_PCF8523
+#undef USE_RV8803
+#undef USE_RX8900
+#undef USE_RX8025
+
 #undef UPDATE_RTC_BY_NTP
 #undef USE_NTP
 
-#ifdef USE_SYSLOG_SERVER
-#define _SYSLOG_USE_NETWORK
-#endif /* USE_SYSLOG_SERVER */
-#ifdef USE_LOG_FILE
-#define _SYSLOG_USE_FILE
-#endif /* USE_LOG_FILE */
-#ifdef SD_FAT
-#define _SYSLOG_USE_SD_FAT
-#endif /* SD_FAT */
-#ifdef HARD_SERIAL
-#define _SYSLOG_USE_HARDWARE_SERIAL
-#else /* HARD_SERIAL */
-#define _SYSLOG_USE_SOFTWARE_SERIAL
-#endif /* HARD_SERIAL */
-
-#define _SYSLOG_OUTPUT_TIME
-#ifdef USE_RTC
-#define _SYSLOG_USE_RTC
-#endif /* USE_RTC */
-#ifdef USE_NTP
-#define _SYSLOG_USE_NTP
-#endif /* USE_NTP */
-
-#undef USE_WDT // Uno R4, Gigaは非対応
-#define WDT_DURATION 20000
+#define USE_WDT
+//#define WDT_DURATION 20000
+#define WDT_DURATION 5500
 #define WDT_SHORT_DURATION 500
 
-//#define I2C_IF Wire // Nano 33 IoT, MKR WiFi 1010, Mega2560, Zero, MKR Zero
-//#define I2C_IF Wire1 // Giga
-#ifndef I2C_IF
-#if HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN || HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB
-#define I2C_IF Wire1
-#else
-#define I2C_IF Wire
-#endif
-#endif /* I2C_IF */
 
-/* 定義する変数の展開 */
-#ifdef USE_GROVE_LCD
-#define LCD_HAL_USE_GROVE
-#endif /* USE_GROVE_LCD */
-
-#if defined(USE_SC1602BSLB) || defined(USE_SC2004CSLB)
-#define USE_LIQUID_CRYSTAL
-#endif /* USE_SC1602BSLB or  USE_SC2004CSLB */
-
-
-#ifdef USE_LIQUID_CRYSTAL
-#define LCD_HAL_USE_LIQUID_CRYSTAL
-#endif /* USE_LIQUID_CRYSTAL */
-
-#ifdef USE_ACM1602NI
-#define LCD_HAL_USE_ACM1602NI
-#endif /* USE_ACM1602NI */
-
-#if defined(USE_GROVE_LCD) || defined(USE_LIQUID_CRYSTAL) || defined(USE_ACM1602NI)
-#define USE_CHARACTER_DISPLAY
-#endif /* USE_GROVE_LCD || USE_LIQUID_CRYSTAL || USE_ACM1602NI */
-
-
-#ifdef GROVE_NEO_PIXEL
-#define LED_HAL_USE_NEO_PIXEL
-#endif /* GROVE_NEO_PIXEL */
-
-#if defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR)
-#define LED_HAL_USE_MY9221
-#endif /* GROVE_LED_CIRCULAR || GROVE_LED_BAR */
-
-#ifdef GROVE_CHAINABLE_LED
-#define LED_HAL_USE_P98X3 // Grove CHAINABLE LED etc.
-#endif /* GROVE_CHAINABLE_LED */
-
-#if defined(GROVE_NEO_PIXEL) || defined(GROVE_MONO_LED) || defined(USE_SIMPLE_COLOR_LED) || defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR) || defined(GROVE_CHAINABLE_LED)
-#define USE_LED
-#endif /* GROVE_NEO_PIXEL || GROVE_MONO_LED || USE_SIMPLE_COLOR_LED || GROVE_LED_CIRCULAR || GROVE_LED_BAR || GROVE_CHAINABLE_LED */
-
-/* N SEG LED */
-#if defined(USE_OSL12306_16) || defined(USE_OSL20541) || defined(USE_OSL30561) || defined(USE_GROVE_TM1637) || defined(USE_DFR0090)
-#define USE_NSEG_LED
-#endif /* USE_OSL12306_16 || USE_OSL20541 || USE_OSL30561 || USE_GROVE_TM1637 || defined(USE_DFR0090) */
-
-#if defined(__USE_KT403A_PLAYER__) || defined(__USE_WT2003S_PLAYER__) || defined(__USE_WT2605C_PLAYER__) || defined(__USE_DF_ROBOT_DF_PLAYER_MINI__)
-#define USE_MP3_PLAYER
-#endif /* __USE_KT403A_PLAYER__ || __USE_WT2003S_PLAYER__ || __USE_WT2605C_PLAYER__ || __USE_DF_ROBOT_DF_PLAYER_MINI__ */
-
-#ifdef USE_GIGA_DISPLAY_GFX
-#define GRAPHIC_DISPLAY_HAL_USE_GIGA_DISPLAY_GFX
-#endif /* USE_GIGA_DISPLAY_GFX */
-
-#ifdef USE_BODMER_TFT_ESPI
-#define GRAPHIC_DISPLAY_HAL_USE_BODMER_TFT_ESPI
-#endif /* USE_BODMER_TFT_ESPI */
-
-#ifdef USE_ADAFRUIT_GFX
-#define GRAPHIC_DISPLAY_HAL_USE_ADAFRUIT_GFX
-#endif /* USE_ADAFRUIT_GFX */
-
-#if defined(USE_GIGA_DISPLAY_GFX) ||  defined(USE_BODMER_TFT_ESPI) ||  defined(USE_ADAFRUIT_GFX)
-#define USE_GRAPHIC_DISPLAY
-#endif /* USE_GIGA_DISPLAY_GFX  || USE_BODMER_TFT_ESPI || USE_ADAFRUIT_GFX */
-
-#if defined(USE_GRAPHIC_DISPLAY) || defined(USE_LOG_FILE)
-#define USE_SD
-#endif /* USE_GRAPHIC_DISPLAY || USE_LOG_FILE */
-
-
-
-
-#if defined(USE_NTP) && defined(USE_RTC)
-#error "do not define USE_NTP and USE_RTC togather."
-#endif /* USE_NTP && USE_RTC */
-
-#if defined(USE_MP3_PLAYER) && defined(USE_LOG_FILE)
-#error "USE_MP3_PLAYERとUSE_LOG_FILEを同時にONにできない"
-#endif /* USE_MP3_PLAYER && USE_LOG_FILE */
+#include "AdditionalDef.h"
 
 #endif /* __UNIFIED_MQTT_ACTUATOR_CONFIG_H__ */

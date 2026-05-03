@@ -103,21 +103,41 @@
 
 ## 動作テスト
 
+|機種名|MCUコア|[3-Wire LED Module DFR0090][DFR0090]|[Grove - 4-Digit Display][Grove4DigitLED]|
+|---|---|---|---|
+|[Arduino Nano ESP32][NanoESP32]|Xtensa LX6|✕2|◯|
+|[Arduino UNO R4 Minima][UnoR4Minima]|ARM Cortex-M4|◯|◯|
+|[Arduino Giga R1 Wifi][GigaR1WiFi]|ARM Cortex-M7|◯|◯|
+|[Arduino M0 pro][M0Pro]|ARM Cortex-M0+|◯|◯|
+|[Arduino Nano 33 IoT][Nano33IoT]|ARM Cortex-M0+|▲5,6|◯|
+|[Ardino MKR Zero][MKRZero]|ARM Cortex-M0+|▲5|◯|
+|[Arduino Nano RP2040 Connect][NanoRP2040Connect]|ARM Cortex-M0+|||
 
-|機種名|[OSL20541-IR(秋月電子)][OSL20541IR]|[OSL30561-IRA(秋月電子)][OSL30561IRA]|[3-Wire LED Module DFR0090][DFR0090]|[OSL12306-16-IRA(秋月電子)][OSL12306-16-IRA]|[Grove - 4-Digit Display][Grove4DigitLED]|
-|---|---|---|---|---|---|---|
-|[Arduino Nano ESP32][NanoESP32]|✕1|✕1|✕2|✕1|◯|
-|[Arduino M0 pro][M0Pro]|✕1|✕1|◯|✕1|◯|
-|[Arduino UNO R4 Minima][UnoR4Minima]|✕1|✕1|◯|✕1|◯|
-|[Arduino Nano 33 IoT][Nano33IoT]|✕1|✕1|✕2|✕1|◯|
-|[Arduino Giga R1 Wifi][GigaR1WiFi]|◯|◯|◯|▲4|◯|
-|[Ardino MKR Zero][MKRZero]|✕1|✕1|✕3|✕1|◯|
-|[Arduino Nano RP2040 Connect][NanoRP2040Connect]||||||
+|機種名|MCUコア|[OSL20541-IR(秋月電子)][OSL20541IR]|[OSL30561-IRA(秋月電子)][OSL30561IRA]|[OSL12306-16-IRA(秋月電子)][OSL12306-16-IRA]|
+|---|---|---|---|---|
+|[Arduino Nano ESP32][NanoESP32]|Xtensa LX6|✕1|✕1||✕1|
+|[Arduino UNO R4 Minima][UnoR4Minima]|ARM Cortex-M4|✕1|✕1|✕1|
+|[Arduino Giga R1 Wifi][GigaR1WiFi]|ARM Cortex-M7|◯|◯|▲4|
+|[Arduino M0 pro][M0Pro]|ARM Cortex-M0+|✕1|✕1|✕1|
+|[Arduino Nano 33 IoT][Nano33IoT]|ARM Cortex-M0+|✕1|✕1|✕1|
+|[Ardino MKR Zero][MKRZero]|ARM Cortex-M0+|✕1|✕1|✕1|
+|[Arduino Nano RP2040 Connect][NanoRP2040Connect]|ARM Cortex-M0+||||
+
+|内容|意味|
+|---|---|
+|◯|動作する|
+|△|動作電圧の変換等を行えば動作する|
+|▲|一部の機能が動作しない|
+|✕|動作しない|
+|-|原理的に互換性がない|
+|未|未検証|
 
 - 1 : 端子数が不足して接続できない/困難なため，未確認
 - 2 : [3-Wire LED Module DFR0090][DFR0090]を接続した状態で，ArduinoをUSB接続してもPCではArduinoのUSB接続を認識できない．(電源容量の問題の可能性あり)
 - 3 : 動作開始してしばらくすると，Arduino本体ごと，USBの認識ができなくなり，Arduinoの動作が止まる．(電源容量の問題の可能性あり)
 - 4 : 動作はするが，電圧の関係で暗くて読み取ることがほぼ無理
+- 5 : ACアダプタ等で給電しないと動作しない．また，USBによるプログラム書き込み時は，[3-Wire LED Module DFR0090][DFR0090]を外しておいた方が良い．
+- 6 : 動作はするが，すごく暗い．
 
 ## デバイス
 

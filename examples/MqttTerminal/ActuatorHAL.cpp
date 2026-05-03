@@ -41,9 +41,9 @@ typedef struct deviceManagementTable {
 #ifdef USE_SIMPLE_SOUND
   SimpleSound * simpleSound;
 #endif /* USE_SIMPLE_SOUND */
-#ifdef USE_PMW
-  PMW * pmw;
-#endif /* USE_PMW */
+#ifdef USE_PWM
+  PWM * pwm;
+#endif /* USE_PWM */
 //#ifdef USE_IRDA
 //  IRsend * ir_sender;
 //#endif /* USE_IRDA */
@@ -113,8 +113,8 @@ void dumpDeviceTable(void) {
       case SIMPLE_SOUND_TYPE_NORMAL: {
         Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("SIMPLE_SOUND_TYPE_NORMAL");break;
       }
-      case PMW_TYPE_SIMPLE: {
-        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("PMW_TYPE_SIMPLE");break;
+      case PWM_TYPE_SIMPLE: {
+        Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("PWM_TYPE_SIMPLE");break;
       }
       case IRDA_TYPE_SIMPLE: {
         Serial.print("device id=");Serial.print(i);Serial.print(", type=");Serial.println("IRDA_TYPE_SIMPLE");break;
@@ -183,12 +183,12 @@ void updateDeviceTable(uint8_t id, uint32_t type, SimpleSound * ss) {
 }
 #endif /* USE_SIMPLE_SOUND */
 
-#ifdef USE_PMW
-void updateDeviceTable(uint8_t id, uint32_t type, PMW *  ss) {
+#ifdef USE_PWM
+void updateDeviceTable(uint8_t id, uint32_t type, PWM *  ss) {
   deviceTable[id].type = type;
-  deviceTable[id].pmw = ss;
+  deviceTable[id].pwm = ss;
 }
-#endif /* USE_PMW */
+#endif /* USE_PWM */
 
 #ifdef USE_IRDA
 //void updateDeviceTable(uint8_t id, uint32_t type, IRsend * ss) {
@@ -256,8 +256,8 @@ uint8_t getDeviceCategory(uint32_t type) {
   if ((type > SIMPLE_SOUND_TYPE_MIN) && (type < SIMPLE_SOUND_TYPE_MAX)) {
     return DEVICE_CATEGORY_SIMPLE_SOUND;
   };
-  if ((type > PMW_TYPE_MIN) && (type < PMW_TYPE_MAX)) {
-    return DEVICE_CATEGORY_SIMPLE_PMW;
+  if ((type > PWM_TYPE_MIN) && (type < PWM_TYPE_MAX)) {
+    return DEVICE_CATEGORY_SIMPLE_PWM;
   };
   if ((type > IRDA_TYPE_MIN) && (type < IRDA_TYPE_MAX)) {
     return DEVICE_CATEGORY_SIMPLE_IRDA;
@@ -612,48 +612,48 @@ bool controlSimpleSound(JsonDocument doc) {
 #endif /* USE_SIMPLE_SOUND */
 }
 
-#ifdef USE_PMW
-void pmwApply(uint8_t id) {
-  deviceTable[id].pmw->apply();
+#ifdef USE_PWM
+void pwmApply(uint8_t id) {
+  deviceTable[id].pwm->apply();
 }
-#endif /* USE_PMW */
+#endif /* USE_PWM */
 
-#ifdef USE_PMW
-void pmwOFF(uint8_t id) {
-  deviceTable[id].pmw->off();
+#ifdef USE_PWM
+void pwmOFF(uint8_t id) {
+  deviceTable[id].pwm->off();
 }
-#endif /* USE_PMW */
+#endif /* USE_PWM */
 
-#ifdef USE_PMW
-void pmwSet(uint8_t id, uint8_t level) {
-  deviceTable[id].pmw->set(level);
+#ifdef USE_PWM
+void pwmSet(uint8_t id, uint8_t level) {
+  deviceTable[id].pwm->set(level);
 }
-#endif /* USE_PMW */
+#endif /* USE_PWM */
 
-bool controlPMW(JsonDocument doc) {
-#ifdef USE_PMW
+bool controlPWM(JsonDocument doc) {
+#ifdef USE_PWM
   uint8_t command = doc["command"];
   uint8_t id = doc["id"];
   switch(command) {
-    case PMW_COMMAND_APPLY: {
-      pmwApply(id);
+    case PWM_COMMAND_APPLY: {
+      pwmApply(id);
       break;
     }
-    case PMW_COMMAND_OFF: {
-      pmwOFF(id);
+    case PWM_COMMAND_OFF: {
+      pwmOFF(id);
       break;
     }
-    case PMW_COMMAND_SET: {
+    case PWM_COMMAND_SET: {
       uint8_t level = doc["param"][0]["value"];
-      pmwSet(id, level);
+      pwmSet(id, level);
       break;
     }
     default: return false;
   }
   return true;
-#else /* USE_PMW */
+#else /* USE_PWM */
   return false;
-#endif /* USE_PMW */
+#endif /* USE_PWM */
 }
 
 bool controlIRDA(JsonDocument doc) {
@@ -1291,8 +1291,8 @@ bool controlActuator(JsonDocument doc) {
       flag = controlSimpleSound(doc);
       break;
     }
-    case DEVICE_CATEGORY_SIMPLE_PMW: {
-      flag = controlPMW(doc);
+    case DEVICE_CATEGORY_SIMPLE_PWM: {
+      flag = controlPWM(doc);
       break;
     }
     case DEVICE_CATEGORY_SIMPLE_IRDA: {

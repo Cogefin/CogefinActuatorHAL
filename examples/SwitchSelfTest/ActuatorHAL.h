@@ -38,9 +38,9 @@
 #include "src/SimpleSound.h"
 #endif /* USE_SIMPLE_SOUND */
 
-#ifdef USE_PMW
-#include "src/PmwHAL.h"
-#endif /* USE_PMW */
+#ifdef USE_PWM
+#include "src/PwmHAL.h"
+#endif /* USE_PWM */
 
 #ifdef USE_MP3_PLAYER
 #include "src/UnifiedMP3.h"
@@ -58,7 +58,7 @@
 #define DEVICE_CATEGORY_SIMPLE_SWITCH       4
 #define DEVICE_CATEGORY_SERVO               5
 #define DEVICE_CATEGORY_SIMPLE_SOUND        6
-#define DEVICE_CATEGORY_SIMPLE_PMW          7
+#define DEVICE_CATEGORY_SIMPLE_PWM          7
 #define DEVICE_CATEGORY_SIMPLE_IRDA         8
 #define DEVICE_CATEGORY_SIMPLE_MP3_PLAYER   9
 #define DEVICE_CATEGORY_GRAPHIC_DISPLAY     10
@@ -96,9 +96,9 @@
 #define SIMPLE_SOUND_TYPE_NORMAL    601
 #define SIMPLE_SOUND_TYPE_MAX       602
 
-#define PMW_TYPE_MIN                700
-#define PMW_TYPE_SIMPLE             701
-#define PMW_TYPE_MAX                702
+#define PWM_TYPE_MIN                700
+#define PWM_TYPE_SIMPLE             701
+#define PWM_TYPE_MAX                702
 
 #define IRDA_TYPE_MIN               800
 #define IRDA_TYPE_SIMPLE            801
@@ -165,9 +165,9 @@
 #define SIMPLE_SOUND_COMMAND_OFF    2
 #define SIMPLE_SOUND_COMMAND_PLAY   3
 
-#define PMW_COMMAND_APPLY 1
-#define PMW_COMMAND_OFF   2
-#define PMW_COMMAND_SET   3
+#define PWM_COMMAND_APPLY 1
+#define PWM_COMMAND_OFF   2
+#define PWM_COMMAND_SET   3
 
 #define IRDA_COMMAND_BANG_OLUFSEN        10
 #define IRDA_COMMAND_BANG_OLUFSEN_LINK   11
@@ -259,9 +259,9 @@ extern void updateDeviceTable(uint8_t id, uint32_t type, ServoHal * ss);
 extern void updateDeviceTable(uint8_t id, uint32_t type, SimpleSound * ss);
 #endif /* USE_SIMPLE_SOUND */
 
-#ifdef USE_PMW
-extern void updateDeviceTable(uint8_t id, uint32_t type, PMW *  ss);
-#endif /* USE_PMW */
+#ifdef USE_PWM
+extern void updateDeviceTable(uint8_t id, uint32_t type, PWM *  ss);
+#endif /* USE_PWM */
 
 #ifdef USE_IRDA
 //extern void updateDeviceTable(uint8_t id, uint32_t type, IRsend * ss) ;

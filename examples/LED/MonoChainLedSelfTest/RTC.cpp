@@ -8,7 +8,8 @@
 #endif /* USE_RTC */
 
 #ifdef USE_WDT
-#include <Adafruit_SleepyDog.h>
+//#include <Adafruit_SleepyDog.h>
+#include "watchdog.h"
 #endif /* USE_WDT */
 
 #include "src/Syslog.h"
@@ -116,18 +117,18 @@ void setupRTC(void) {
   //date_t dateTime;
   if (rtc.begin(false)) {
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
 
     outputBootlog(F("Successful initialization of the RTC"));
 
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
 
     syslog.SetRtc(&rtc,DATE_TIME);
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
 
   } else {
@@ -139,19 +140,19 @@ void setupRTC(void) {
   }
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   int flag = timeValidity();
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   int clear_flag =rtc.clearPowerFlag();
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   if (RTC_U_SUCCESS==clear_flag) {
@@ -164,7 +165,7 @@ void setupRTC(void) {
   }
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   if (flag < 0) {
@@ -173,7 +174,7 @@ void setupRTC(void) {
   } else if (flag == TIME_IS_INVALID) {
     outputBootlog(F("Time of RTC setting is invalid."));
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     date_t date;
     date.year=2001;
@@ -196,7 +197,7 @@ void setupRTC(void) {
   }
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 

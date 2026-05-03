@@ -26,9 +26,9 @@
 /* N SEG LED */
 //#define USE_OSL12306_16
 //#define USE_OSL20541
-#define USE_OSL30561
+//#define USE_OSL30561
 //#define USE_GROVE_TM1637
-//#define USE_DFR0090
+#define USE_DFR0090
 #define MAX_DIGITS_OF_NSEG_LED 8
 
 /* Servo */

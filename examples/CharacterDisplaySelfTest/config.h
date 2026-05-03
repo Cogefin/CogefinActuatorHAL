@@ -8,8 +8,9 @@
 
 /* character display */
 //#define USE_GROVE_LCD
-//#define USE_ACM1602NI
-#define USE_SC1602BSLB
+#define USE_ACM1602NI
+//#define USE_ACM2004 // 未サポート
+//#define USE_SC1602BSLB
 //#define USE_SC2004CSLB
 
 /* LED */
@@ -37,8 +38,8 @@
 /* Simple sound (speaker etc) */
 //#define USE_SIMPLE_SOUND
 
-/* PMW */
-//#define USE_PMW
+/* PWM */
+//#define USE_PWM
 
 /* IRDA */
 //#define USE_IRDA // Gigaは非対応
@@ -272,11 +273,11 @@
 //#define SPEAKER_PIN D6 // スピーカー
 //#define BUZZER_PIN D8 //ブザー
 
-/* PMW */
+/* PWM */
 // MKR
-#define PMW_PIN D4
+#define PWM_PIN D4
 // other
-//#define PMW_PIN D6
+//#define PWM_PIN D6
 
 /* IRDA */
 #define IR_PIN         D3
@@ -407,13 +408,13 @@
 #define LCD_HAL_USE_LIQUID_CRYSTAL
 #endif /* USE_LIQUID_CRYSTAL */
 
-#ifdef USE_ACM1602NI
+#if defined(USE_ACM1602NI) || defined(USE_ACM2004)
 #define LCD_HAL_USE_ACM1602NI
-#endif /* USE_ACM1602NI */
+#endif /* USE_ACM1602NI or USE_ACM2004 */
 
-#if defined(USE_GROVE_LCD) || defined(USE_LIQUID_CRYSTAL) || defined(USE_ACM1602NI)
+#if defined(USE_GROVE_LCD) || defined(USE_LIQUID_CRYSTAL) || defined(USE_ACM1602NI) || defined(USE_ACM2004)
 #define USE_CHARACTER_DISPLAY
-#endif /* USE_GROVE_LCD || USE_LIQUID_CRYSTAL || USE_ACM1602NI */
+#endif /* USE_GROVE_LCD || USE_LIQUID_CRYSTAL || USE_ACM1602NI  || USE_ACM2004 */
 
 
 #ifdef GROVE_NEO_PIXEL

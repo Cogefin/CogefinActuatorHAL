@@ -30,6 +30,8 @@
 #define LCD_MAX_COLS 16
 #endif /* USE_LIQUID_CRYSTAL */
 
+
+
 HardwareHelper hwHelper;
 
 #ifdef USE_GROVE_LCD
@@ -50,11 +52,24 @@ int liquid_crystal_type = CHARACTER_DISPLAY_TYPE_LIQUID_CRYSTAL;
 #endif /* USE_LIQUID_CRYSTAL */
 
 #ifdef USE_ACM1602NI
+#undef LCD_MAX_ROW
+#undef LCD_MAX_COLS
+#define LCD_MAX_ROW 2
+#define LCD_MAX_COLS 16
 ACM1602NI liquid_crystal_i2c_h;  // set the LCD address to 0x27 for a 16 chars and 2 line display
 UnifiedLCD liquid_crystal_i2c(&liquid_crystal_i2c_h, ACM1602NI_TYPE);
 int liquid_crystal_i2c_num = 0;
 int liquid_crystal_i2c_type = CHARACTER_DISPLAY_TYPE_ACM1602NI;
 #endif /* USE_ACM1602NI */
+
+#ifdef USE_ACM2004
+#undef LCD_MAX_ROW
+#undef LCD_MAX_COLS
+#define LCD_MAX_ROW 4
+#define LCD_MAX_COLS 20
+ACM1602NI liquid_crystal_i2c_h(ACM_TYPE_2004);
+UnifiedLCD lcd(&liquid_crystal_i2c_h, ACM1602NI_TYPE);
+#endif /* USE_ACM2004 */
 
 uint8_t deviceCounter=0;
 
@@ -271,7 +286,7 @@ void setup_character_display(void) {
   Serial.print("Liquid crystal LCD : device No. ");Serial.println(liquid_crystal_num);
 #endif /* USE_LIQUID_CRYSTAL */
 
-#ifdef USE_ACM1602NI
+#if defined(USE_ACM1602NI) || defined(USE_ACM2004)
   liquid_crystal_i2c.begin(LCD_MAX_COLS, LCD_MAX_ROW);
   updateDeviceTable(deviceCounter, CHARACTER_DISPLAY_TYPE_ACM1602NI, &liquid_crystal_i2c);
 
@@ -279,9 +294,12 @@ void setup_character_display(void) {
 
   liquid_crystal_i2c_num = deviceCounter;
   deviceCounter++;
-  Serial.print("ACM1602NI LCD : device No. ");Serial.println(liquid_crystal_i2c_num);
+  Serial.print("ACM1602NI/ACM2004 LCD : device No. ");Serial.println(liquid_crystal_i2c_num);
 
-#endif /* USE_ACM1602NI */
+#endif /* USE_ACM1602NI or USE_ACM2004 */
+
+#ifdef USE_ACM2004
+#endif /* USE_ACM2004 */
 }
 
 

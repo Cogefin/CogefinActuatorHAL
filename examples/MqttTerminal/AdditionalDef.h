@@ -1,0 +1,160 @@
+
+/* LCD definition etc. */
+#ifdef USE_GROVE_LCD
+#define CHARACTER_DISPLAY_GROVE_LCD_COLOMNS 16
+#define CHARACTER_DISPLAY_GROVE_LCD_LINES    2
+#endif /* USE_GROVE_LCD */
+
+#ifdef USE_ACM1602NI
+#define CHARACTER_DISPLAY_ACM1602NI_COLOMNS 16
+#define CHARACTER_DISPLAY_ACM1602NI_LINES    2
+#endif /* USE_ACM1602NI */
+
+#ifdef USE_ACM2004
+#define CHARACTER_DISPLAY_ACM1602NI_COLOMNS 20
+#define CHARACTER_DISPLAY_ACM1602NI_LINES    4
+#endif /* USE_ACM2004 */
+
+#ifdef USE_SC1602BSLB
+#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_COLOMNS 16
+#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_LINES    2
+#endif /* USE_SC1602BSLB */
+
+#ifdef USE_SC2004CSLB
+#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_COLOMNS 20
+#define CHARACTER_DISPLAY_LIQUID_CRYSTAL_LINES    4
+#endif /* USE_SC2004CSLB */
+
+/* N seg LED */
+
+#ifdef USE_SYSLOG_SERVER
+#define _SYSLOG_USE_NETWORK
+#endif /* USE_SYSLOG_SERVER */
+#ifdef USE_LOG_FILE
+#define _SYSLOG_USE_FILE
+#endif /* USE_LOG_FILE */
+#ifdef SD_FAT
+#define _SYSLOG_USE_SD_FAT
+#endif /* SD_FAT */
+#ifdef HARD_SERIAL
+#define _SYSLOG_USE_HARDWARE_SERIAL
+#else /* HARD_SERIAL */
+#define _SYSLOG_USE_SOFTWARE_SERIAL
+#endif /* HARD_SERIAL */
+
+#define _SYSLOG_OUTPUT_TIME
+#ifdef USE_RTC
+#define _SYSLOG_USE_RTC
+#endif /* USE_RTC */
+#ifdef USE_NTP
+#define _SYSLOG_USE_NTP
+#endif /* USE_NTP */
+
+
+
+//#define I2C_IF Wire // Nano 33 IoT, MKR WiFi 1010, Mega2560, Zero, MKR Zero
+//#define I2C_IF Wire1 // Giga
+#ifndef I2C_IF
+#if HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN || HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB
+#define I2C_IF Wire1
+#else
+#define I2C_IF Wire
+#endif
+#endif /* I2C_IF */
+
+/* 定義する変数の展開 */
+#ifdef USE_GROVE_LCD
+#define LCD_HAL_USE_GROVE
+#endif /* USE_GROVE_LCD */
+
+#if defined(USE_SC1602BSLB) || defined(USE_SC2004CSLB)
+#define USE_LIQUID_CRYSTAL
+#endif /* USE_SC1602BSLB or  USE_SC2004CSLB */
+
+
+#ifdef USE_LIQUID_CRYSTAL
+#define LCD_HAL_USE_LIQUID_CRYSTAL
+#endif /* USE_LIQUID_CRYSTAL */
+
+#if defined(USE_ACM1602NI) || defined(USE_ACM2004)
+#define LCD_HAL_USE_ACM1602NI
+#endif /* USE_ACM1602NI or USE_ACM2004 */
+
+#if defined(USE_GROVE_LCD) || defined(USE_LIQUID_CRYSTAL) || defined(USE_ACM1602NI) || defined(USE_ACM2004)
+#define USE_CHARACTER_DISPLAY
+#endif /* USE_GROVE_LCD || USE_LIQUID_CRYSTAL || USE_ACM1602NI  || USE_ACM2004 */
+
+#ifdef GROVE_NEO_PIXEL
+#define LED_HAL_USE_NEO_PIXEL
+#endif /* GROVE_NEO_PIXEL */
+
+#if defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR)
+#define LED_HAL_USE_MY9221
+#endif /* GROVE_LED_CIRCULAR || GROVE_LED_BAR */
+
+#ifdef GROVE_CHAINABLE_LED
+#define LED_HAL_USE_P98X3 // Grove CHAINABLE LED etc.
+#endif /* GROVE_CHAINABLE_LED */
+
+#if defined(GROVE_NEO_PIXEL) || defined(GROVE_MONO_LED) || defined(USE_SIMPLE_COLOR_LED) || defined(GROVE_LED_CIRCULAR) || defined(GROVE_LED_BAR) || defined(GROVE_CHAINABLE_LED)
+#define USE_LED
+#endif /* GROVE_NEO_PIXEL || GROVE_MONO_LED || USE_SIMPLE_COLOR_LED || GROVE_LED_CIRCULAR || GROVE_LED_BAR || GROVE_CHAINABLE_LED */
+
+/* N SEG LED */
+#if defined(USE_OSL12306_16) || defined(USE_OSL20541) || defined(USE_OSL30561) || defined(USE_GROVE_TM1637) || defined(USE_DFR0090)
+#define USE_NSEG_LED
+#endif /* USE_OSL12306_16 || USE_OSL20541 || USE_OSL30561 || USE_GROVE_TM1637 || defined(USE_DFR0090) */
+
+/* simple sound */
+#if defined(BUZZER) || defined(SPEAKER)
+#define USE_SIMPLE_SOUND
+#endif /* defined(BUZZER) || defined(SPEAKER) */
+
+/* mp3 player */
+#if defined(__USE_KT403A_PLAYER__) || defined(__USE_WT2003S_PLAYER__) || defined(__USE_WT2605C_PLAYER__) || defined(__USE_DF_ROBOT_DF_PLAYER_MINI__)
+#define USE_MP3_PLAYER
+#endif /* __USE_KT403A_PLAYER__ || __USE_WT2003S_PLAYER__ || __USE_WT2605C_PLAYER__ || __USE_DF_ROBOT_DF_PLAYER_MINI__ */
+
+/* graphic display */
+#ifdef USE_GIGA_DISPLAY_GFX
+#define GRAPHIC_DISPLAY_HAL_USE_GIGA_DISPLAY_GFX
+#endif /* USE_GIGA_DISPLAY_GFX */
+
+#ifdef USE_BODMER_TFT_ESPI
+#define GRAPHIC_DISPLAY_HAL_USE_BODMER_TFT_ESPI
+#endif /* USE_BODMER_TFT_ESPI */
+
+#ifdef USE_ADAFRUIT_GFX
+#define GRAPHIC_DISPLAY_HAL_USE_ADAFRUIT_GFX
+#endif /* USE_ADAFRUIT_GFX */
+
+#if defined(USE_GIGA_DISPLAY_GFX) ||  defined(USE_BODMER_TFT_ESPI) ||  defined(USE_ADAFRUIT_GFX)
+#define USE_GRAPHIC_DISPLAY
+#endif /* USE_GIGA_DISPLAY_GFX  || USE_BODMER_TFT_ESPI || USE_ADAFRUIT_GFX */
+
+#if defined(USE_GRAPHIC_DISPLAY) || defined(USE_LOG_FILE)
+#define USE_SD
+#endif /* USE_GRAPHIC_DISPLAY || USE_LOG_FILE */
+
+#ifdef USE_WDT
+#if (HARDWARE_TYPE==ARDUINO_UNO_R4_MINIMA) || (HARDWARE_TYPE==ARDUINO_UNO_R4_WIFI)
+//#error "can not use Watch dog timer on Uno R4"
+#define USE_WDT_RENESAS
+#else /* Uno R4 */
+#if  (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN) || (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB)
+#define USE_WDT_MBED
+#else  /* Uno R4 or Giga R1 */
+#define USE_WDT_NORMAL
+#endif /* Uno R4 or Giga R1 */
+#endif /* Uno R4 */
+
+#endif /* USE_WDT */
+
+#if defined(USE_NTP) && defined(USE_RTC)
+#error "do not define USE_NTP and USE_RTC togather."
+#endif /* USE_NTP && USE_RTC */
+
+#if defined(USE_MP3_PLAYER) && defined(USE_LOG_FILE)
+#error "USE_MP3_PLAYERとUSE_LOG_FILEを同時にONにできない"
+#endif /* USE_MP3_PLAYER && USE_LOG_FILE */
+

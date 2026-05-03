@@ -5,9 +5,7 @@
 
 #include "ActuatorHAL.h"
 
-#ifdef USE_WDT
-#include <Adafruit_SleepyDog.h>
-#endif /* USE_WDT */
+#include "watchdog.h"
 
 HardwareHelper hwHelper;
 
@@ -16,7 +14,7 @@ HardwareHelper hwHelper;
 #endif /* USE_ETHERNET */
 
 #ifdef USE_WIFI
-#include <WiFiUtils.h>
+#include "src/WiFiUtils.h"
 #endif /* USE_WIFI */
 
 #if defined(USE_NTP) || defined(UPDATE_RTC_BY_NTP)
@@ -42,7 +40,7 @@ HardwareHelper hwHelper;
 #endif /* USE_FS_H */
 
 #ifdef ESP32
-  #include "SPIFFS.h" // ESP32 only
+#include "SPIFFS.h"  // ESP32 only
 #endif
 
 #endif /* USE_SD */
@@ -57,8 +55,8 @@ IPAddress gatewayAddress(GATEWAY_ADDRESS);
 IPAddress netMask(NETMASK);
 
 #ifdef USE_ETHERNET
-byte mac[] = { FIX_MAC_ADDRESS }; //アドレスは手持ちのarduinoのものに変更すること
-#endif /* USE_ETHERNET */
+byte mac[] = { FIX_MAC_ADDRESS };  //アドレスは手持ちのarduinoのものに変更すること
+#endif                             /* USE_ETHERNET */
 
 /*
    ネットワーク関係の設定
@@ -75,9 +73,9 @@ boolean useDhcp = false;  // 固定IPアドレス
 #endif                   /* USE_DHCP */
 
 #ifdef USE_WIFI
-char ssid[] = SSID_STR;    // your network SSID (name)
-char pass[] = WIFI_PASS;    // your network password (use for WPA, or use as key for WEP)
-#endif /* USE_WIFI */
+char ssid[] = SSID_STR;   // your network SSID (name)
+char pass[] = WIFI_PASS;  // your network password (use for WPA, or use as key for WEP)
+#endif                    /* USE_WIFI */
 
 #if defined(USE_NTP) || defined(USE_RTC)
 unsigned long currentTime;
@@ -91,7 +89,7 @@ EthernetUDP ntpUDP;
 WiFiUDP ntpUDP;
 #endif                                      /* USE_WIFI */
 NTPClient timeClient(ntpUDP, 9 * 60 * 60);  // JST
-#endif   /* USE_NTP or UPDATE_RTC_BY_NTP */
+#endif                                      /* USE_NTP or UPDATE_RTC_BY_NTP */
 
 #ifdef USE_ETHERNET
 EthernetClient netClient;
@@ -113,15 +111,17 @@ File logfile;
 MqttClient mqttClient(netClient);
 
 #ifdef USE_LED_INDICATOR
-#include <ChainableLED.h>
-ChainableLED indicator(LED_INDICATOR_PIN_CLK, LED_INDICATOR_PIN_DATA, 1);  //defines the pin used on arduino.
-#endif  /* USE_LED_INDICATOR */
+#include <Adafruit_NeoPixel.h>
+Adafruit_NeoPixel indicator(1, LED_INDICATOR_PIN, NEO_GRB + NEO_KHZ800);
+#endif /* USE_LED_INDICATOR */
+
+
 
 char msgBuffer[BUFFER_SIZE];
 
 void clearMsgBuffer(void) {
-  for (int i=0; i< BUFFER_SIZE; i++) {
-    msgBuffer[i]=0;
+  for (int i = 0; i < BUFFER_SIZE; i++) {
+    msgBuffer[i] = 0;
   }
 }
 
@@ -149,16 +149,22 @@ int liquid_crystal_i2c_num = -1;
 int liquid_crystal_i2c_type = CHARACTER_DISPLAY_TYPE_ACM1602NI;
 #endif /* USE_ACM1602NI */
 
+#ifdef USE_ACM2004
+ACM1602NI liquid_crystal_i2c_h(ACM_TYPE_2004);
+UnifiedLCD liquid_crystal_i2c(&liquid_crystal_i2c_h, ACM1602NI_TYPE);
+int liquid_crystal_i2c_num = -1;
+int liquid_crystal_i2c_type = CHARACTER_DISPLAY_TYPE_ACM1602NI;
+#endif /* USE_ACM2004 */
 
 #ifdef GROVE_LED_BAR
 Grove_LED_Bar bar(GROVE_LED_BAR_PIN_CLK, GROVE_LED_BAR_PIN_DATA, GROVE_LED_BAR_DIRECTION, LED_BAR_10);
-UnifiedLED ledBar(&(bar),LED_BAR, GROVE_LED_BAR_NUM_OF_LED, LED_FORWARD);
+UnifiedLED ledBar(&(bar), LED_BAR, GROVE_LED_BAR_NUM_OF_LED, LED_FORWARD);
 int grove_led_bar_num = -1;
 #endif /* GROVE_LED_BAR */
 
 #ifdef GROVE_LED_CIRCULAR
 Grove_LED_Bar circle(GROVE_LED_CIRCLE_PIN_CLK, GROVE_LED_CIRCLE_PIN_DATA, GROVE_LED_CIRCLE_DIRECTION, LED_CIRCULAR_24);
-UnifiedLED ledCircle(&(circle),LED_CIRCULAR, GROVE_LED_CIRCLE_NUM_OF_LED, LED_FORWARD);
+UnifiedLED ledCircle(&(circle), LED_CIRCULAR, GROVE_LED_CIRCLE_NUM_OF_LED, LED_FORWARD);
 int grove_led_circular = -1;
 #endif /* GROVE_LED_CIRCULAR */
 
@@ -192,19 +198,18 @@ int simple_mono_led = -1;
 
 
 uint8_t pins[OSL12306_16_NUM_OF_PINS] = {
-  OSL12306_16_PIN_A1 , OSL12306_16_PIN_A2 , OSL12306_16_PIN_B , OSL12306_16_PIN_C , OSL12306_16_PIN_D1 , OSL12306_16_PIN_D2 , OSL12306_16_PIN_E , OSL12306_16_PIN_F , 
-  OSL12306_16_PIN_G1 , OSL12306_16_PIN_G2 , OSL12306_16_PIN_J , OSL12306_16_PIN_K , OSL12306_16_PIN_L , OSL12306_16_PIN_M , OSL12306_16_PIN_N , OSL12306_16_PIN_P
+  OSL12306_16_PIN_A1, OSL12306_16_PIN_A2, OSL12306_16_PIN_B, OSL12306_16_PIN_C, OSL12306_16_PIN_D1, OSL12306_16_PIN_D2, OSL12306_16_PIN_E, OSL12306_16_PIN_F,
+  OSL12306_16_PIN_G1, OSL12306_16_PIN_G2, OSL12306_16_PIN_J, OSL12306_16_PIN_K, OSL12306_16_PIN_L, OSL12306_16_PIN_M, OSL12306_16_PIN_N, OSL12306_16_PIN_P
 };
 
-uint8_t digitPins[OSL12306_16_NUM_OF_DIGITS] = {OSL12306_16_PIN_DIGIT};
+uint8_t digitPins[OSL12306_16_NUM_OF_DIGITS] = { OSL12306_16_PIN_DIGIT };
 
 OSL12306_16 __osl12306_16(
   OSL12306_16_PIN_TYPE,
   pins,
   OSL12306_16_PIN_DP,
   OSL12306_16_NUM_OF_DIGITS,
-  digitPins
-);
+  digitPins);
 
 UnifiedNSegLED osl12306_16(&__osl12306_16, OSL12306_16_TYPE);
 int osl12306_16_num = -1;
@@ -231,15 +236,14 @@ uint8_t osl20541_charPins[OSL20541_NUM_OF_CHAR_PINS] = {
   OSL20541_PIN_M,
   OSL20541_PIN_N
 };
-uint8_t osl20541_digitPins[OSL20541_NUM_OF_DIGITS] = {OSL20541_PIN_DIGIT_1, OSL20541_PIN_DIGIT_2};
+uint8_t osl20541_digitPins[OSL20541_NUM_OF_DIGITS] = { OSL20541_PIN_DIGIT_1, OSL20541_PIN_DIGIT_2 };
 
 OSL20541 __osl20541(
   OSL20541_PIN_TYPE,
   osl20541_charPins,
   OSL20541_PIN_DP,
   OSL20541_NUM_OF_DIGITS,
-  osl20541_digitPins
-);
+  osl20541_digitPins);
 
 UnifiedNSegLED osl20541(&__osl20541, OSL20541_TYPE);
 
@@ -249,7 +253,7 @@ uint32_t osl20541_type = NSEG_LED_TYPE_OSL20541;
 
 #ifdef USE_OSL30561
 
-uint8_t osl30561_digitPins[OSL30561_NUM_OF_DIGITS] = {OSL30561_PIN_DIGIT_1, OSL30561_PIN_DIGIT_2, OSL30561_PIN_DIGIT_3};
+uint8_t osl30561_digitPins[OSL30561_NUM_OF_DIGITS] = { OSL30561_PIN_DIGIT_1, OSL30561_PIN_DIGIT_2, OSL30561_PIN_DIGIT_3 };
 
 OSL30561 __osl30561(
   OSL30561_PIN_TYPE,
@@ -262,8 +266,7 @@ OSL30561 __osl30561(
   OSL30561_PIN_G,
   OSL30561_PIN_DP,
   OSL30561_NUM_OF_DIGITS,
-  osl30561_digitPins
-);
+  osl30561_digitPins);
 
 UnifiedNSegLED osl30561(&__osl30561, OSL30561_TYPE);
 int osl30561_num = -1;
@@ -328,67 +331,67 @@ int irda_num = -1;
 
 /* Mega 2560 */
 #if CPU_ARCH == AVR_ARCH
-  #define COMSerial SSerial
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#define COMSerial SSerial
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* CPU_ARCH == AVR_ARCH */
 
 /* Uno R4 Series */
-#if CPU_ARCH==RA4_ARCH
-  #define COMSerial Serial1 // 0/RX, 1/TX
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if CPU_ARCH == RA4_ARCH
+#define COMSerial Serial1  // 0/RX, 1/TX
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* CPU_ARCH == RA4_ARCH */
 
 /* Nano RP2040 connect */
-#if HARDWARE_TYPE==ARDUINO_NANO_RP2040_C
-  #define COMSerial Serial1
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if HARDWARE_TYPE == ARDUINO_NANO_RP2040_C
+#define COMSerial Serial1
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* HARDWARE_TYPE==ARDUINO_NANO_RP2040_C */
 
 /* Nano ESP32 */
-#if HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3
-  #define COMSerial SSerial
-  #define ShowSerial Serial
+#if HARDWARE_TYPE == ARDUINO_NANO_ESP32_S3
+#define COMSerial SSerial
+#define ShowSerial Serial
 //  #define COMSerial Serial1  // D9/RX, D8/TX
 //  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#define _SET_SERIALS_
 #endif /* HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3 */
 
 /* Arduino M0 pro */
-#if HARDWARE_TYPE==ARDUINO_M0
-  #define COMSerial Serial1 // 0/RX, 1/TX
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if HARDWARE_TYPE == ARDUINO_M0
+#define COMSerial Serial1  // 0/RX, 1/TX
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* HARDWARE_TYPE==ARDUINO_M0 */
 
 /* Arduino MKR Series */
-#if (CPU_TYPE==TYPE_SAMD21G18A) && ( FORM_FACTOR_TYPE==FORM_FACTOR_MKR)
-  #define COMSerial Serial1  // 13/RX, 14/TX
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if (CPU_TYPE == TYPE_SAMD21G18A) && (FORM_FACTOR_TYPE == FORM_FACTOR_MKR)
+#define COMSerial Serial1  // 13/RX, 14/TX
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* (CPU_TYPE==TYPE_SAMD21G18A) && ( FORM_FACTOR_TYPE==FORM_FACTOR_MKR) */
 
 /* Nano 33 IoT */
-#if HARDWARE_TYPE==ARDUINO_NANO_33_IOT
-  #define COMSerial Serial1
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if HARDWARE_TYPE == ARDUINO_NANO_33_IOT
+#define COMSerial Serial1
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* HARDWARE_TYPE==ARDUINO_NANO_33_IOT */
 
 /* Arduino Giga */
-#if (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN) || (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB)
-  #define COMSerial Serial1 // D0/RX, D1/TX
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if (HARDWARE_TYPE == ARDUINO_GIGA_WIFI_MAIN) || (HARDWARE_TYPE == ARDUINO_GIGA_WIFI_SUB)
+#define COMSerial Serial1  // D0/RX, D1/TX
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_MAIN) || (HARDWARE_TYPE==ARDUINO_GIGA_WIFI_SUB) */
 
 /* Nano RP2040 Connect */
-#if HARDWARE_TYPE==ARDUINO_NANO_RP2040_C
-  #define COMSerial Serial1
-  #define ShowSerial Serial
-  #define _SET_SERIALS_
+#if HARDWARE_TYPE == ARDUINO_NANO_RP2040_C
+#define COMSerial Serial1
+#define ShowSerial Serial
+#define _SET_SERIALS_
 #endif /* HARDWARE_TYPE==ARDUINO_NANO_RP2040_C */
 
 #ifndef _SET_SERIALS_
@@ -399,12 +402,12 @@ int irda_num = -1;
 #ifdef __USE_WT2605C_PLAYER__
 #define COMSERIAL_SPEED 115200
 #ifdef _SOFTWARE_SERIAL_
-#if HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3
+#if HARDWARE_TYPE == ARDUINO_NANO_ESP32_S3
 WT2605C<EspSoftwareSerial> wt2605c_player;
-#else /* HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3 */
+#else  /* HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3 */
 WT2605C<SoftwareSerial> wt2605c_player;
 #endif /* HARDWARE_TYPE==ARDUINO_NANO_ESP32_S3 */
-#else /* _SOFTWARE_SERIAL_ */
+#else  /* _SOFTWARE_SERIAL_ */
 WT2605C<HardwareSerial> wt2605c_player;
 #endif /* _SOFTWARE_SERIAL_ */
 UnifiedMP3 wt2605c(&wt2605c_player, WT2605C_PLAYER);
@@ -448,11 +451,11 @@ bool update_RTC_Time(unsigned long);
 #endif /* UPDATE_RTC_BY_NTP */
 
 #ifdef USE_GIGA_DISPLAY_GFX
-GigaDisplay_GFX tft; // create the object
+GigaDisplay_GFX tft;  // create the object
 int giga_display_num = -1;
 int giga_display_type = GRAPHIC_DISPLAY_TYPE_GIGA_DISPLAY;
 
-UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft,DISPLAY_TYPE_GIGA_DISPLAY_GFX);
+UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft, DISPLAY_TYPE_GIGA_DISPLAY_GFX);
 #endif /* USE_GIGA_DISPLAY_GFX */
 
 #ifdef USE_BODMER_TFT_ESPI
@@ -460,7 +463,7 @@ TFT_eSPI tft = TFT_eSPI();
 int bodmer_tft_num = -1;
 int bodmer_tft_type = GRAPHIC_DISPLAY_TYPE_BODMER_TFT;
 
-UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft,DISPLAY_TYPE_BODMER_TFT_ESPI);
+UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft, DISPLAY_TYPE_BODMER_TFT_ESPI);
 #endif /* USE_BODMER_TFT_ESPI */
 
 #ifdef USE_ADAFRUIT_GFX
@@ -473,12 +476,11 @@ Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_ILI9341_PIN_CS, TFT_ILI9341_PIN_DC, 
 int adafruit_gfx_num = -1;
 int adafruit_gfx_type = GRAPHIC_DISPLAY_TYPE_ADAFRUIT_GFX;
 
-UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft,DISPLAY_TYPE_ADAFRUIT_GFX);
+UnifiedGraphicDisplay display = UnifiedGraphicDisplay(&tft, DISPLAY_TYPE_ADAFRUIT_GFX);
 #endif /* USE_ADAFRUIT_GFX */
 
 
-uint8_t deviceCounter=0;
-
+uint8_t deviceCounter = 0;
 
 
 
@@ -511,10 +513,9 @@ void reboot() {
     delay(WDT_SHORT_DURATION);
     Serial.print(".");
   }
-#else /* USE_WDT */
+#else  /* USE_WDT */
   hwHelper.SoftwareReset();
 #endif /* USE_WDT */
-
 }
 
 void setup() {
@@ -529,13 +530,15 @@ void setup() {
 
 
 #ifdef USE_LED_INDICATOR
-  indicator.init();
-  indicator.setColorRGB(0, 0, 0, 120);  //青
+  indicator.begin();
+  indicator.clear();
+  indicator.setPixelColor(0, indicator.Color(0, 0, 120));  //青
+  indicator.show();                                        // Send the updated pixel colors to the hardware.
   delay(INDICATOR_SHORT_DURATION);
 #endif /* USE_LED_INDICATOR */
 
 #ifdef USE_WDT
-  int countdownMS = Watchdog.enable(WDT_DURATION);
+  int countdownMS = setupWDT(WDT_DURATION);
 #endif /* USE_WDT */
 
 #ifdef DEBUG
@@ -549,7 +552,7 @@ void setup() {
 #endif /* USE_SD */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_LOG_FILE
@@ -557,23 +560,24 @@ void setup() {
 #endif /* USE_LOG_FILE */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_RTC
   setupRTC();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_RTC */
 
 #ifdef USE_LED_INDICATOR
-  indicator.setColorRGB(0, 128, 20, 128);  // 紫
+  indicator.setPixelColor(0, indicator.Color(128, 20, 128));  // 紫
+  indicator.show();                                           // Send the updated pixel colors to the hardware.
   delay(INDICATOR_SHORT_DURATION);
 #endif /* USE_LED_INDICATOR */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   outputBootlog(F("network setup start."));
@@ -584,7 +588,8 @@ void setup() {
     if (Ethernet.begin(mac) == 0) {
       Serial.println(F("DHCP fail."));
 #ifdef USE_LED_INDICATOR
-      indicator.setColorRGB(0, 200, 40, 0);  //オレンジ
+      indicator.setPixelColor(0, indicator.Color(200, 40, 0));  // オレンジ
+      indicator.show();                                         // Send the updated pixel colors to the hardware.
       delay(INDICATOR_SHORT_DURATION);
 #endif /* USE_LED_INDICATOR */
       reboot();
@@ -625,21 +630,21 @@ void setup() {
   outputBootlog(F("network setup done"));
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #if defined(USE_NTP) || defined(UPDATE_RTC_BY_NTP)
   timeClient.begin();
   timeClient.update();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_NTP or UPDATE_RTC_BY_NTP */
 
 #ifdef USE_NTP
   syslog.SetNTP(&timeClient, DATE_TIME);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_NTP */
 
@@ -654,7 +659,7 @@ void setup() {
 #endif /* UPDATE_RTC_BY_NTP */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_LOG_SERIAL
@@ -670,24 +675,24 @@ void setup() {
 #endif /* USE_LOG_SERIAL */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   mqttClient.setId(HOSTNAME);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_MQTT_AUTH
   mqttClient.setUsernamePassword(MQTT_AUTH_USERNAME, MQTT_AUTH_PASSWORD);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_MQTT_AUTH */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.log(LOG_INFO, "Attempting to connect to the MQTT broker");
@@ -695,46 +700,47 @@ void setup() {
   if (!mqttClient.connect(serverAddress, port)) {
     syslog.logf(LOG_CRIT, "MQTT connection failed! Error code =  %d", mqttClient.connectError());
 #ifdef USE_LED_INDICATOR
-    indicator.setColorRGB(0, 200, 40, 0);  //オレンジ
+    indicator.setPixelColor(0, indicator.Color(200, 40, 0));  // オレンジ
+    indicator.show();                                         // Send the updated pixel colors to the hardware.
     delay(INDICATOR_SHORT_DURATION);
 #endif /* USE_LED_INDICATOR */
     reboot();
   }
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.log(LOG_INFO, "You're connected to the MQTT broker!");
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   // set the message receive callback
   mqttClient.onMessage(onMqttMessage);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.logf(LOG_CRIT, "MQTT subscribe to topic: %s", topic);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   // subscribe to a topic
   mqttClient.subscribe(topic);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.logf(LOG_CRIT, "Waiting for MQTT message of topic: %s", topic);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_CHARACTER_DISPLAY
@@ -742,7 +748,7 @@ void setup() {
 #endif /* USE_CHARACTER_DISPLAY */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_LED
@@ -750,7 +756,7 @@ void setup() {
 #endif /* USE_LED */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_NSEG_LED
@@ -758,7 +764,7 @@ void setup() {
 #endif /* USE_NSEG_LED */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_SWITCH
@@ -766,7 +772,7 @@ void setup() {
 #endif /* USE_SWITCH */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_SERVO
@@ -774,7 +780,7 @@ void setup() {
 #endif /* USE_SERVO */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_SIMPLE_SOUND
@@ -782,7 +788,7 @@ void setup() {
 #endif /* USE_SIMPLE_SOUND */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_PMW
@@ -790,7 +796,7 @@ void setup() {
 #endif /* USE_PMW */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_IRDA
@@ -798,7 +804,7 @@ void setup() {
 #endif /* USE_IRDA */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_MP3_PLAYER
@@ -806,7 +812,7 @@ void setup() {
 #endif /* USE_MP3_PLAYER */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_GRAPHIC_DISPLAY
@@ -814,79 +820,80 @@ void setup() {
 #endif /* USE_GRAPHIC_DISPLAY */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_LED_INDICATOR
-  indicator.setColorRGB(0, 0, 0, 0);  // 消灯
-#endif /* USE_LED_INDICATOR */
+  indicator.setPixelColor(0, indicator.Color(0, 0, 0));  // 消灯
+  indicator.show();                                      // Send the updated pixel colors to the hardware.
+#endif                                                   /* USE_LED_INDICATOR */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   dumpDeviceTable();
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.log(LOG_INFO, "setup: end");
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-
 }
 
 void loop() {
   keepStateActuator();
   mqttClient.poll();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 
 
 void onMqttMessage(int messageSize) {
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #ifdef USE_LED_INDICATOR
-  indicator.setColorRGB(0, 0, 128, 0);
+  indicator.setPixelColor(0, indicator.Color(0, 128, 0));
+  indicator.show();  // Send the updated pixel colors to the hardware.
   delay(INDICATOR_SHORT_DURATION);
 #endif /* USE_LED_INDICATOR */
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.logf(LOG_INFO, "Received a message with topic: %s", mqttClient.messageTopic().c_str());
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.logf(LOG_INFO, "Message length: %d (byte)", messageSize);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   // use the Stream interface to print the contents
-  int counter =0;
+  int counter = 0;
   while (mqttClient.available()) {
     msgBuffer[counter] = (char)mqttClient.read();
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
-    counter ++;
+    counter++;
   }
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   JsonDocument doc;
   deserializeJson(doc, msgBuffer);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   long time = doc["time"];
   uint8_t id = doc["id"];
@@ -896,49 +903,49 @@ void onMqttMessage(int messageSize) {
 
   syslog.logf(LOG_INFO, "Target actuator id: %d", id);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Target actuator type: %lu", type);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "message time: %ld", time);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "actuator control command: %d", command);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "actuator control command parameter size: %d", paramSize);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
-  for (int i=0; i< BUFFER_SIZE; i++) {
+  for (int i = 0; i < BUFFER_SIZE; i++) {
     if (msgBuffer[i] == 0) break;
     Serial.print((char)msgBuffer[i]);
-    msgBuffer[i]=0;
+    msgBuffer[i] = 0;
   }
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   controlActuator(doc);
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #ifdef USE_LED_INDICATOR
-  indicator.setColorRGB(0, 0, 0, 0);
-#endif /* USE_LED_INDICATOR */
+  indicator.setPixelColor(0, indicator.Color(0, 0, 0));
+  indicator.show();  // Send the updated pixel colors to the hardware.
+#endif               /* USE_LED_INDICATOR */
 
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-
 }
 
 #ifdef USE_CHARACTER_DISPLAY
@@ -951,15 +958,15 @@ void setup_character_display(void) {
   JsonDocument liquidCrystal;
 #endif /* USE_LIQUID_CRYSTAL */
 
-#ifdef USE_ACM1602NI
+#if defined(USE_ACM1602NI) || defined(USE_ACM2004)
   JsonDocument acm1602ni;
-#endif /* USE_ACM1602NI */
+#endif /* USE_ACM1602NI or USE_ACM2004 */
 
   // set up the LCD's number of columns and rows:
 #ifdef USE_GROVE_LCD
   updateDeviceTable(deviceCounter, CHARACTER_DISPLAY_TYPE_GROVE_LCD_RGB_BACKLIGHT, &lcd);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_lcd_num = deviceCounter;
   grove_rgb_lcd["id"] = grove_lcd_num;
@@ -972,24 +979,24 @@ void setup_character_display(void) {
   grove_rgb_lcd["param"][0]["font"] = 0;
   if (false == controlActuator(grove_rgb_lcd)) {
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     syslog.log(LOG_CRIT, "setSize() to Grove LCD RGB Backlight : fail");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
   deviceCounter++;
   syslog.logf(LOG_INFO, "Grove RGB backlight LCD : device No. %d", grove_lcd_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_GROVE_LCD */
 
 #ifdef USE_LIQUID_CRYSTAL
   updateDeviceTable(deviceCounter, CHARACTER_DISPLAY_TYPE_LIQUID_CRYSTAL, &liquid_crystal);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   liquid_crystal_num = deviceCounter;
   liquidCrystal["id"] = liquid_crystal_num;
@@ -1003,20 +1010,20 @@ void setup_character_display(void) {
   if (false == controlActuator(liquidCrystal)) {
     syslog.log(LOG_CRIT, "setSize() to liquid crystal : fail");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
   deviceCounter++;
   syslog.logf(LOG_INFO, "Liquid crystal LCD : device No. %d", liquid_crystal_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_LIQUID_CRYSTAL */
 
-#ifdef USE_ACM1602NI
+#if defined(USE_ACM1602NI) || defined(USE_ACM2004)
   updateDeviceTable(deviceCounter, CHARACTER_DISPLAY_TYPE_ACM1602NI, &liquid_crystal_i2c);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   liquid_crystal_i2c_num = deviceCounter;
   acm1602ni["id"] = liquid_crystal_i2c_num;
@@ -1028,23 +1035,21 @@ void setup_character_display(void) {
   acm1602ni["param"][0]["row"] = CHARACTER_DISPLAY_ACM1602NI_LINES;
   acm1602ni["param"][0]["font"] = 0;
   if (false == controlActuator(acm1602ni)) {
-    syslog.log(LOG_CRIT, "setSize() to ACM1602NI : fail");
+    syslog.log(LOG_CRIT, "setSize() to ACM1602NI/ACM2004 : fail");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
   deviceCounter++;
-  syslog.logf(LOG_INFO, "ACM1602NI LCD : device No. %d", liquid_crystal_i2c_num);
+  syslog.logf(LOG_INFO, "ACM1602NI/ACM2004 LCD : device No. %d", liquid_crystal_i2c_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-#endif /* USE_ACM1602NI */
+#endif /* USE_ACM1602NI or USE_ACM2004 */
 }
 #endif /* USE_CHARACTER_DISPLAY */
 
-#ifdef USE_LED
 
-#endif /* USE_LED */
 
 #ifdef USE_LED
 void setup_led(void) {
@@ -1053,71 +1058,71 @@ void setup_led(void) {
 #ifdef GROVE_LED_BAR
   ledBar.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "led bar begin");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   ledBar.setOnce(0);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   ledBar.setMode(LED_FORWARD);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "led bar set mode");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_MONO_CHAIN_LED, &ledBar);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_led_bar_num = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Grove LED Bar : device No.%d", grove_led_bar_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* GROVE_LED_BAR */
 #ifdef GROVE_LED_CIRCULAR
   ledCircle.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "led circle begin");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   ledCircle.setOnce(0);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   ledCircle.setMode(LED_FORWARD);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "led circle set mode");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_MONO_CHAIN_LED, &ledCircle);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_led_circular = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Grove LED Circular : device No.%d", grove_led_circular);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* GROVE_LED_CIRCULAR */
 #endif /* LED_HAL_USE_MY9221 */
@@ -1125,30 +1130,30 @@ void setup_led(void) {
 #ifdef GROVE_CHAINABLE_LED
   ledChain.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  for (int i=0; i< GROVE_CHAINABLE_LED_NUM_OF_LED; i++) {
-    ledChain.setLed(i,0,0,0);
+  for (int i = 0; i < GROVE_CHAINABLE_LED_NUM_OF_LED; i++) {
+    ledChain.setLed(i, 0, 0, 0);
   }
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "full color led setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_COLOR_CHAIN_LED, &ledChain);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_chainable_led = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Grove RGB chainable LED : device No.%d", grove_chainable_led);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* GROVE_CHAINABLE_LED */
 #endif /* LED_HAL_USE_P98X3 */
@@ -1156,85 +1161,85 @@ void setup_led(void) {
 #ifdef GROVE_NEO_PIXEL
   neoPixel.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  for (int i=0; i< LED_NEO_PIXEL_NUM_OF_LED; i++) {
-    neoPixel.setLed(i,0,0,0);
+  for (int i = 0; i < LED_NEO_PIXEL_NUM_OF_LED; i++) {
+    neoPixel.setLed(i, 0, 0, 0);
   }
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.log(LOG_INFO, "neoPixel begin");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_COLOR_CHAIN_LED, &neoPixel);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_neo_pixel = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Neo pixel LED : device No.%d", grove_neo_pixel);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* GROVE_NEO_PIXEL */
 #endif /* LED_HAL_USE_NEO_PIXEL */
 #ifdef USE_SIMPLE_COLOR_LED
   syslog.log(LOG_INFO, "cathod/anode common led setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   cathodeCommon.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  cathodeCommon.setLed(0,0,0);
+  cathodeCommon.setLed(0, 0, 0);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_COLOR_LED, &cathodeCommon);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   simple_color_led = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Anode/Cathod common RGB LED : device No.%d", simple_color_led);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_SIMPLE_COLOR_LED */
 #ifdef GROVE_MONO_LED
   syslog.log(LOG_INFO, "mono led setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   mono_led.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   mono_led.setLed(0);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, LED_TYPE_MONO_LED, &mono_led);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   simple_mono_led = deviceCounter;
   deviceCounter++;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Single mono LED : device No.%d", simple_mono_led);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* GROVE_MONO_LED */
 }
@@ -1255,15 +1260,15 @@ void setup_nseg_led(void) {
 #ifdef USE_OSL12306_16
   syslog.log(LOG_INFO, "N-seg led OSL12306-16 setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl12306_16.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, osl12306_16_type, &osl12306_16, OSL12306_16_NUM_OF_DIGITS);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl12306_16_num = deviceCounter;
   deviceCounter++;
@@ -1272,34 +1277,34 @@ void setup_nseg_led(void) {
   clear["type"] = osl12306_16_type;
   controlActuator(clear);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   //set["id"] = osl12306_16_num;
   //set["type"] = osl12306_16_type;
   //set["param"][0]["period"] = 1;
   //set["param"][0]["text"] = "4";
   //controlActuator(set);
-//#ifdef USE_WDT
-//  Watchdog.reset();
-//#endif /* USE_WDT */
+  //#ifdef USE_WDT
+  //  resetWDT();
+  //#endif /* USE_WDT */
   syslog.logf(LOG_INFO, "N-seg LED OSL12306 16 : device No.%d", osl12306_16_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_OSL12306_16 */
 
 #ifdef USE_OSL20541
   syslog.log(LOG_INFO, "N-seg led OSL20541 setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl20541.begin();
-  #ifdef USE_WDT
-  Watchdog.reset();
+#ifdef USE_WDT
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, osl20541_type, &osl20541, OSL20541_NUM_OF_DIGITS);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl20541_num = deviceCounter;
   deviceCounter++;
@@ -1308,26 +1313,26 @@ void setup_nseg_led(void) {
   clear["type"] = osl20541_type;
   controlActuator(clear);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "N-seg LED OSL20541 : device No.%d", osl20541_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_OSL20541 */
 
 #ifdef USE_OSL30561
   syslog.log(LOG_INFO, "N-seg led OSL30561 setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl30561.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, osl30561_type, &osl30561, OSL30561_NUM_OF_DIGITS);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   osl30561_num = deviceCounter;
   deviceCounter++;
@@ -1336,32 +1341,32 @@ void setup_nseg_led(void) {
   clear["type"] = osl30561_type;
   controlActuator(clear);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "N-seg LED OSL30561 : device No.%d", osl30561_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_OSL30561 */
 
 
 #ifdef USE_DFR0090
-//#define DIGITS DFR0090_NUM_OF_DIGITS
-//#define PRINTABLE_CHAR_NUM 18
-//UnifiedNSegLED dfr0090(&_dfr, DFR0090_TYPE);
-//int dfr0090_num = -1;
-//uint32_t dfr0090_type = NSEG_LED_TYPE_DFR0090;
+  //#define DIGITS DFR0090_NUM_OF_DIGITS
+  //#define PRINTABLE_CHAR_NUM 18
+  //UnifiedNSegLED dfr0090(&_dfr, DFR0090_TYPE);
+  //int dfr0090_num = -1;
+  //uint32_t dfr0090_type = NSEG_LED_TYPE_DFR0090;
   syslog.log(LOG_INFO, "N-seg led dfr0090 setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   dfr0090.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, dfr0090_type, &dfr0090, DFR0090_NUM_OF_DIGITS);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   dfr0090_num = deviceCounter;
   deviceCounter++;
@@ -1370,11 +1375,11 @@ void setup_nseg_led(void) {
   clear["type"] = dfr0090_type;
   controlActuator(clear);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "N-seg LED dfr0090 : device No.%d", dfr0090_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_DFR0090 */
 
@@ -1382,15 +1387,15 @@ void setup_nseg_led(void) {
 #ifdef USE_GROVE_TM1637
   syslog.log(LOG_INFO, "N-seg led Grove TM1637 setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   tm1637.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, grove_tm1637_type, &tm1637, 0);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   grove_tm1637_num = deviceCounter;
@@ -1400,7 +1405,7 @@ void setup_nseg_led(void) {
   clear["type"] = grove_tm1637_type;
   controlActuator(clear);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   JsonDocument setBrightness;
@@ -1409,7 +1414,7 @@ void setup_nseg_led(void) {
   setBrightness["time"] = millis();
   setBrightness["command"] = NSEG_LED_COMMAND_SET_BRIGHTNESS;
   setBrightness["paramSize"] = 1;
-  setBrightness["param"][0]["brightness"] = BRIGHT_TYPICAL; //BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
+  setBrightness["param"][0]["brightness"] = BRIGHT_TYPICAL;  //BRIGHT_TYPICAL = 2,BRIGHT_DARKEST = 0,BRIGHTEST = 7;
   controlActuator(setBrightness);
 
   JsonDocument setColon;
@@ -1421,11 +1426,11 @@ void setup_nseg_led(void) {
   setColon["param"][0]["flag"] = true;
   controlActuator(setColon);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "N-seg LED Grove TM1637 : device No.%d", grove_tm1637_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_GROVE_TM1637 */
 }
@@ -1435,21 +1440,21 @@ void setup_nseg_led(void) {
 void setup_switch(void) {
   syslog.log(LOG_INFO, "Simple switch setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   switch_device.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, SIMPLE_SWITCH_TYPE_NORMAL, &switch_device);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   switch_num = deviceCounter;
   deviceCounter++;
   syslog.logf(LOG_INFO, "Simple switch device : device No.%d", switch_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_SWITCH */
@@ -1458,21 +1463,21 @@ void setup_switch(void) {
 void setup_servo(void) {
   syslog.log(LOG_INFO, "Servo setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   myservo.attach(SERVO_PIN);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, servo_type, &servoHal);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   servo_num = deviceCounter;
   deviceCounter++;
   syslog.logf(LOG_INFO, "Servo device : device No.%d", servo_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_SERVO */
@@ -1494,7 +1499,7 @@ void setup_servo(void) {
 void setup_sound(void) {
   syslog.log(LOG_INFO, "Sound device setup.");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   JsonDocument doc;
   doc["time"] = millis();
@@ -1505,57 +1510,57 @@ void setup_sound(void) {
 #ifdef SPEAKER
   syslog.log(LOG_INFO, "Speaker setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   speaker.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, SIMPLE_SOUND_TYPE_NORMAL, &speaker);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   speaker_num = deviceCounter;
   deviceCounter++;
   doc["id"] = speaker_num;
   controlActuator(doc);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Simple sound Speaker : device No.%d", speaker_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* SPEAKER */
 
 #ifdef BUZZER
   syslog.log(LOG_INFO, "Buzzer setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   buzzer.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, SIMPLE_SOUND_TYPE_NORMAL, &buzzer);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   buzzer_num = deviceCounter;
   deviceCounter++;
   doc["id"] = buzzer_num;
   controlActuator(doc);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   syslog.logf(LOG_INFO, "Simple sound Buzzer : device No.%d", buzzer_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* BUZZER */
   syslog.log(LOG_INFO, "Sound device setup done.");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_SIMPLE_SOUND */
@@ -1564,21 +1569,21 @@ void setup_sound(void) {
 void setup_pmw(void) {
   syslog.log(LOG_INFO, "Simple PMW device setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   sw.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, PMW_TYPE_SIMPLE, &sw);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   pmw_num = deviceCounter;
   deviceCounter++;
   syslog.logf(LOG_INFO, "Simple PMW device : device No.%d", pmw_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_PMW */
@@ -1588,17 +1593,17 @@ void setup_pmw(void) {
 void setup_irda(void) {
   syslog.log(LOG_INFO, "IRDA device setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   init_ir_sender(deviceCounter, IRDA_TYPE_SIMPLE, IR_PIN);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   irda_num = deviceCounter;
   deviceCounter++;
   syslog.logf(LOG_INFO, "Simple IRDA device : device No.%d", irda_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_IRDA */
@@ -1608,24 +1613,24 @@ void setup_irda(void) {
 void setup_mp3(void) {
   syslog.log(LOG_INFO, "MP3 player setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #ifdef USE_WT2605C_PLAYER
   syslog.log(LOG_INFO, "grove mp3 player wt2605c setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   COMSerial.begin(115200);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   wt2605c_player.init(COMSerial);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, MP3_PLAYER_TYPE_WT2605C, &wt2605c);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   grove_wt2605c_num = deviceCounter;
   deviceCounter++;
@@ -1638,55 +1643,55 @@ void setup_mp3(void) {
   wt2605_stop["paramSize"] = 0;
   if (false == controlActuator(wt2605_stop)) {
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     syslog.log(LOG_CRIT, "stop music with grove mp3 player wt2605c : fail");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
   syslog.logf(LOG_INFO, "grove mp3 player wt2605c : device No.%d", grove_wt2605c_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_WT2605C_PLAYER */
 
 #ifdef USE_DF_ROBOT_DF_PLAYER_MINI
   syslog.log(LOG_INFO, "DF Robot MP3 player setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   COMSerial.begin(9600);
 #ifdef USE_WDT
-  Watchdog.reset();
-#endif /* USE_WDT */
-  if (!myDFPlayer.begin(COMSerial, /*isACK = */true, /*doReset = */true)) {  //Use serial to communicate with mp3.
+  resetWDT();
+#endif                                                                         /* USE_WDT */
+  if (!myDFPlayer.begin(COMSerial, /*isACK = */ true, /*doReset = */ true)) {  //Use serial to communicate with mp3.
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     syslog.log(LOG_CRIT, "Unable to begin:");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     syslog.log(LOG_CRIT, "1.Please recheck the connection!");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     syslog.log(LOG_CRIT, "2.Please insert the SD card!");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
-    while(true){
-      delay(0); // Code to compatible with ESP8266 watch dog.
+    while (true) {
+      delay(0);  // Code to compatible with ESP8266 watch dog.
     }
   }
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   updateDeviceTable(deviceCounter, MP3_PLAYER_TYPE_DF_ROBOT_DFP, &dfplayer);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   dfp_mp3_num = deviceCounter;
   deviceCounter++;
@@ -1700,20 +1705,20 @@ void setup_mp3(void) {
   if (false == controlActuator(dfplayer_stop)) {
     syslog.log(LOG_CRIT, "stop music with DF Robot df player : fail");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
-    while(true){
-      delay(0); // Code to compatible with ESP8266 watch dog.
+    while (true) {
+      delay(0);  // Code to compatible with ESP8266 watch dog.
     }
   }
   syslog.logf(LOG_INFO, "DF Robot MP3 player : device No.%d", dfp_mp3_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_DF_ROBOT_DF_PLAYER_MINI */
   syslog.log(LOG_INFO, "MP3 player setup done.");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_MP3_PLAYER */
@@ -1721,22 +1726,21 @@ void setup_mp3(void) {
 
 
 #ifdef USE_GRAPHIC_DISPLAY
-bool display_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap)
-{
-  if ( y >= display.height() ) return 0;
+bool display_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap) {
+  if (y >= display.height()) return 0;
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #ifdef USE_BODMER_TFT_ESPI
   // This function will clip the image block rendering automatically at the TFT boundaries
   display.pushImage(x, y, w, h, bitmap);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-#else /* USE_BODMER_TFT_ESPI */
+#else  /* USE_BODMER_TFT_ESPI */
   display.drawRGBBitmap(x, y, bitmap, w, h);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_BODMER_TFT_ESPI */
 
@@ -1750,25 +1754,25 @@ bool display_output(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitm
 void setup_graphic_display(void) {
   syslog.log(LOG_INFO, "graphic display setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 
 #ifdef USE_BODMER_TFT_ESPI
   syslog.log(LOG_INFO, "graphic display BODMER TFT eSPI setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_BODMER_TFT, &display );
+  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_BODMER_TFT, &display);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   bodmer_tft_num = deviceCounter;
   deviceCounter++;
 
   syslog.logf(LOG_INFO, "graphic display BODMER TFT eSPI : device No.%d", bodmer_tft_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 #endif /* USE_BODMER_TFT_ESPI */
@@ -1776,36 +1780,36 @@ void setup_graphic_display(void) {
 #ifdef USE_GIGA_DISPLAY_GFX
   syslog.log(LOG_INFO, "graphic display Arduino Giga display setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_GIGA_DISPLAY, &display );
+  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_GIGA_DISPLAY, &display);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   giga_display_num = deviceCounter;
   deviceCounter++;
 
   syslog.logf(LOG_INFO, "graphic display Arduino Giga display : device No.%d", giga_display_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_GIGA_DISPLAY_GFX */
 
 #ifdef USE_ADAFRUIT_GFX
   syslog.log(LOG_INFO, "graphic display Adafruit GFX setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
-  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_ADAFRUIT_GFX, &display );
+  updateDeviceTable(deviceCounter, GRAPHIC_DISPLAY_TYPE_ADAFRUIT_GFX, &display);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   adafruit_gfx_num = deviceCounter;
   deviceCounter++;
 
   syslog.logf(LOG_INFO, "ggraphic display Adafruit GFX : device No.%d", adafruit_gfx_num);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_ADAFRUIT_GFX */
 
@@ -1813,40 +1817,40 @@ void setup_graphic_display(void) {
   // Initialise the TFT
   tft.begin();
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
 
   display.setTextColor(0xFFFF, 0x0000);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
   display.fillScreen(TFT_BLACK);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #ifdef USE_BODMER_TFT_ESPI
-  display.setSwapBytes(true); // We need to swap the colour bytes (endianess)
+  display.setSwapBytes(true);  // We need to swap the colour bytes (endianess)
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #endif /* USE_BODMER_TFT_ESPI */
 
   // The jpeg image can be scaled by a factor of 1, 2, 4, or 8
   TJpgDec.setJpgScale(1);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   // The decoder must be given the exact name of the rendering function above
   TJpgDec.setCallback(display_output);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   syslog.log(LOG_INFO, "graphic display setup done.");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 #endif /* USE_GRAPHIC_DISPLAY */
@@ -1855,7 +1859,7 @@ void setup_graphic_display(void) {
 void setup_sd(void) {
   syslog.log(LOG_INFO, "SD setup");
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
   // Initialise SD before TFT
@@ -1863,10 +1867,10 @@ void setup_sd(void) {
 
     syslog.log(LOG_CRIT, "SD.begin(PIN) failed!");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
-    while(true){
-      delay(0); // Code to compatible with ESP8266 watch dog.
+    while (true) {
+      delay(0);  // Code to compatible with ESP8266 watch dog.
     }
   }
 }
@@ -1876,12 +1880,12 @@ void setup_sd(void) {
 /*
  * 初期化(syslog有効化前)時のログ出力
  */
-void outputBootlog(const __FlashStringHelper *message) {
+void outputBootlog(const __FlashStringHelper* message) {
 
   Serial.println(message);
 
 #ifdef USE_WDT
-    Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 #ifdef USE_LOG_FILE
   if (logfile) {
@@ -1889,17 +1893,16 @@ void outputBootlog(const __FlashStringHelper *message) {
     logfile.println(message);
 
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
 
-#if CPU_ARCH!=XTENSA_LX6_ARCH /* ESP32以外 */
+#if CPU_ARCH != XTENSA_LX6_ARCH /* ESP32以外 */
     logfile.flush();
 #endif /* ESP32以外 */
-
   }
 #endif /* USE_LOG_FILE */
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 }
 
@@ -1907,47 +1910,47 @@ void outputBootlog(const __FlashStringHelper *message) {
  * ログローテート
  */
 #if defined(LOG_ROTATE) && defined(USE_LOG_FILE)
-void logRotate(){
+void logRotate() {
   String logFileName = LOGFILE_NAME_HEAD;
-  logFileName+="9.txt";
+  logFileName += "9.txt";
   if (SD.exists(logFileName.c_str())) {
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     SD.remove(logFileName.c_str());
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
-  for (int i=8;i>=0;i--){
-    int targetNum=i+1;
-    String targetFileName=LOGFILE_NAME_HEAD;
-    targetFileName+=targetNum;
-    targetFileName+=".txt";
+  for (int i = 8; i >= 0; i--) {
+    int targetNum = i + 1;
+    String targetFileName = LOGFILE_NAME_HEAD;
+    targetFileName += targetNum;
+    targetFileName += ".txt";
     logFileName = LOGFILE_NAME_HEAD;
     logFileName += i;
     logFileName += ".txt";
     if (SD.exists(logFileName.c_str())) {
 #ifdef USE_WDT
-      Watchdog.reset();
+      resetWDT();
 #endif /* USE_WDT */
-      SD.rename(logFileName.c_str(),targetFileName.c_str());
+      SD.rename(logFileName.c_str(), targetFileName.c_str());
 #ifdef USE_WDT
-      Watchdog.reset();
+      resetWDT();
 #endif /* USE_WDT */
     }
   }
   logFileName = LOGFILE_NAME_HEAD;
-  logFileName+=".txt";
-  String targetFileName=LOGFILE_NAME_HEAD;
+  logFileName += ".txt";
+  String targetFileName = LOGFILE_NAME_HEAD;
   targetFileName += "0.txt";
   if (SD.exists(logFileName.c_str())) {
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
-    SD.rename(logFileName.c_str(),targetFileName.c_str());
+    SD.rename(logFileName.c_str(), targetFileName.c_str());
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
 }
@@ -1960,31 +1963,31 @@ void logRotate(){
 void prepare_logfile() {
 
   String logFileName = LOGFILE_NAME_HEAD;
-  logFileName+=".txt";
+  logFileName += ".txt";
 
   logfile = SD.open(logFileName.c_str(), FILE_WRITE);
 #ifdef USE_WDT
-  Watchdog.reset();
+  resetWDT();
 #endif /* USE_WDT */
 
-  if (LOG_FILE_SIZE_MAX<logfile.size()) {
+  if (LOG_FILE_SIZE_MAX < logfile.size()) {
 #ifdef LOG_ROTATE
     logRotate();
 #else /* LOG_ROTATE */
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     logfile.close();
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     SD.remove(logFileName.c_str());
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
     logfile = SD.open(logFileName.c_str(), FILE_WRITE);
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
 #endif /* LOG_ROTATE */
   }
@@ -1992,14 +1995,13 @@ void prepare_logfile() {
   if (logfile) {
     syslog.SetFile(&logfile);
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   } else {
     Serial.println("open logfile failure.");
 #ifdef USE_WDT
-    Watchdog.reset();
+    resetWDT();
 #endif /* USE_WDT */
   }
 }
 #endif /* USE_LOG_FILE */
-
